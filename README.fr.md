@@ -1,4 +1,4 @@
-**Version 0.0.3_ALPHA** · Auteur : [PiBOH](https://piboh.github.io/)
+**Version 0.0.4_BETA** · Auteur : [PiBOH](https://piboh.github.io/)
 
 > 🔤 Un lecteur de fichiers Markdown multiplateforme. Aucune installation requise — téléchargez et lancez.
 
@@ -32,6 +32,8 @@ Téléchargez la dernière version depuis la [page des Releases](https://github.
 | **Linux (Debian/Ubuntu)**| MultiMDReader_\*_amd64.deb        | `sudo dpkg -i *.deb`                     |
 | **Linux (Toutes distros)** | MultiMDReader_\*_amd64.AppImage | `chmod +x && ./MultiMDReader_*.AppImage` |
 | **Linux (Arch)**         | multimdreader-\*.pkg.tar.zst      | `sudo pacman -U *.pkg.tar.zst`           |
+
+> ⚠️ **Avis sur les tests** : L'auteur n'a testé que les versions Windows. Les builds macOS et Linux sont fournis tels quels et peuvent contenir des problèmes spécifiques à la plateforme. Si vous rencontrez un problème sur macOS ou Linux, merci d'[ouvrir une issue](https://github.com/PiBOH/multimdreader/issues).
 
 ## 🌐 Essayer en Ligne
 
@@ -122,4 +124,4 @@ MIT © [PiBOH](https://piboh.github.io/)
 
 **Dépôt** : [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Auteur** : [PiBOH](https://piboh.github.io/)  
-**Version** : 0.0.3_ALPHA
+**Version** : 0.0.4_BETA
