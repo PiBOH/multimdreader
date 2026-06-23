@@ -1,10 +1,24 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 
+// ─── Constants ────────────────────────────────────────────────────
+const APP_VERSION = '0.0.3_ALPHA';
+const APP_AUTHOR = 'PiBOH';
+const APP_WEBSITE = 'https://piboh.github.io/';
+const APP_REPO = 'https://github.com/PiBOH/multimdreader';
+
+const SUPPORTED_EXTENSIONS = [
+  '.md', '.markdown', '.mdown', '.mkd', '.mkdn', '.mdwn', '.mdtxt', '.mdtext', '.txt'
+];
+
+const MAX_RECENT_CONTENT_SIZE = 100_000;
+const MAX_RECENT_FILES = 20;
+
+// ─── Types ────────────────────────────────────────────────────────
 interface RecentFile {
   name: string;
   content: string;
@@ -12,8 +26,7 @@ interface RecentFile {
   size: number;
 }
 
-const SUPPORTED_EXTENSIONS = ['.md', '.markdown', '.mdown', '.mkd', '.mkdn', '.mdwn', '.mdtxt', '.mdtext', '.txt'];
-
+// ─── Utility Functions ────────────────────────────────────────────
 function isSupportedFile(name: string): boolean {
   return SUPPORTED_EXTENSIONS.some(ext => name.toLowerCase().endsWith(ext));
 }
@@ -24,10 +37,178 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function formatDate(timestamp: number): string {
-  return new Date(timestamp).toLocaleString();
+function formatDate(timestamp: number, locale: string): string {
+  if (!timestamp) return '—';
+  try {
+    return new Date(timestamp).toLocaleString(locale, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return new Date(timestamp).toLocaleString();
+  }
 }
 
+function getLocaleForDateFormat(i18nLang: string): string {
+  const map: Record<string, string> = {
+    'it': 'it-IT',
+    'en-GB': 'en-GB',
+    'en-US': 'en-US',
+    'es': 'es-ES',
+    'de': 'de-DE',
+    'fr': 'fr-FR',
+  };
+  return map[i18nLang] || 'en-US';
+}
+
+// ─── Icons (inline SVG components) ───────────────────────────────
+function IconOpenFile() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+  );
+}
+
+function IconSidebar() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
+
+function IconSun() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+  );
+}
+
+function IconMoon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+    </svg>
+  );
+}
+
+function IconInfo() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
+}
+
+function IconGlobe() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+    </svg>
+  );
+}
+
+function IconFile() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  );
+}
+
+function IconTrash() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+  );
+}
+
+function IconClose() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  );
+}
+
+function IconCopy() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
+function IconCheck() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+
+function IconChevronDown() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  );
+}
+
+// ─── Code Block Component with Copy Button ────────────────────────
+function CodeBlock({ children, className, ...props }: {
+  children: ReactNode;
+  className?: string;
+  [key: string]: unknown;
+}) {
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+  const codeRef = useRef<HTMLElement>(null);
+
+  const handleCopy = useCallback(() => {
+    const codeElement = codeRef.current;
+    if (codeElement) {
+      navigator.clipboard.writeText(codeElement.textContent || '').then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(() => {
+        // Fallback for older browsers
+        const range = document.createRange();
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        document.execCommand('copy');
+        selection?.removeAllRanges();
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    }
+  }, []);
+
+  return (
+    <div className="code-block-wrapper relative">
+      <button
+        onClick={handleCopy}
+        className="copy-btn absolute top-2 right-2 p-1.5 rounded-md bg-gray-700/80 hover:bg-gray-600 text-gray-300 hover:text-white transition-colors z-10"
+        title={t('reader.copyCode')}
+      >
+        {copied ? <IconCheck /> : <IconCopy />}
+      </button>
+      <code ref={codeRef} className={className} {...props}>
+        {children}
+      </code>
+    </div>
+  );
+}
+
+// ─── Main App Component ──────────────────────────────────────────
 export default function App() {
   const { t, i18n } = useTranslation();
   const [currentContent, setCurrentContent] = useState<string>('');
@@ -42,15 +223,16 @@ export default function App() {
       return [];
     }
   });
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [darkMode, setDarkMode] = useState(() => {
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
     const stored = localStorage.getItem('multimdreader-theme');
     if (stored) return stored === 'dark';
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
-  const [aboutOpen, setAboutOpen] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState<boolean>(false);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState<boolean>(false);
+  const [fileReadError, setFileReadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
@@ -116,10 +298,13 @@ export default function App() {
     return () => document.removeEventListener('keydown', handleKeyboard);
   }, []);
 
-  const MAX_RECENT_CONTENT_SIZE = 100_000;
-
   const openFile = useCallback((file: File) => {
-    if (!isSupportedFile(file.name)) return;
+    if (!isSupportedFile(file.name)) {
+      setFileReadError(t('errors.unsupportedFile'));
+      setTimeout(() => setFileReadError(null), 3000);
+      return;
+    }
+    setFileReadError(null);
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
@@ -132,11 +317,16 @@ export default function App() {
         const storedContent = content.length > MAX_RECENT_CONTENT_SIZE
           ? content.slice(0, MAX_RECENT_CONTENT_SIZE) + '\n\n... [content truncated for storage]'
           : content;
-        return [{ name: file.name, content: storedContent, lastOpened: Date.now(), size: file.size }, ...filtered].slice(0, 20);
+        return [{ name: file.name, content: storedContent, lastOpened: Date.now(), size: file.size }, ...filtered].slice(0, MAX_RECENT_FILES);
       });
     };
+    // BUG FIX: Added onerror handler for FileReader
+    reader.onerror = () => {
+      setFileReadError(t('errors.fileReadError'));
+      setTimeout(() => setFileReadError(null), 3000);
+    };
     reader.readAsText(file);
-  }, []);
+  }, [t]);
 
   const closeFile = useCallback(() => {
     setCurrentContent('');
@@ -145,6 +335,7 @@ export default function App() {
     setCurrentFileModified(0);
   }, []);
 
+  // BUG FIX: Properly typed as React.ChangeEvent<HTMLInputElement>
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) openFile(file);
@@ -167,7 +358,13 @@ export default function App() {
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(false);
+    // Only set dragging false if we're leaving the main area
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setIsDragging(false);
+    }
   }, []);
 
   const openRecentFile = useCallback((file: RecentFile) => {
@@ -181,6 +378,15 @@ export default function App() {
     setRecentFiles([]);
   }, []);
 
+  const removeRecentFile = useCallback((fileName: string) => {
+    setRecentFiles(prev => prev.filter(f => f.name !== fileName));
+  }, []);
+
+  const changeLanguage = useCallback((lang: string) => {
+    i18n.changeLanguage(lang);
+    setLangDropdownOpen(false);
+  }, [i18n]);
+
   const languages = [
     { code: 'it', label: t('language.it'), flag: '🇮🇹' },
     { code: 'en-GB', label: t('language.enGB'), flag: '🇬🇧' },
@@ -190,45 +396,36 @@ export default function App() {
     { code: 'fr', label: t('language.fr'), flag: '🇫🇷' },
   ];
 
+  const localeForDates = getLocaleForDateFormat(i18n.language);
+
   return (
-    <div
-      className="h-screen flex flex-col"
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-    >
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-2 flex items-center gap-3 shrink-0 z-20">
+    <div className="h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      {/* ─── Header ─────────────────────────────────────────── */}
+      <header className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shrink-0">
         {/* Logo & Title */}
-        <div className="flex items-center gap-2 mr-4">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+        <div className="flex items-center gap-2 mr-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
             M
           </div>
-          <h1 className="text-lg font-bold text-gray-900 dark:text-white hidden sm:block">
-            MultiMDReader
-          </h1>
+          <span className="font-semibold text-lg hidden sm:inline">MultiMDReader</span>
         </div>
 
         {/* Sidebar Toggle */}
         <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"
-          title={t('header.toggleSidebar')}
+          onClick={() => setSidebarOpen(prev => !prev)}
+          className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          title={t('header.toggleSidebar') + ' (Ctrl+B)'}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          <IconSidebar />
         </button>
 
         {/* Open File */}
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium"
+          className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          title={t('header.openFile') + ' (Ctrl+O)'}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          <span className="hidden sm:inline">{t('header.openFile')}</span>
+          <IconOpenFile />
         </button>
         <input
           ref={fileInputRef}
@@ -241,35 +438,35 @@ export default function App() {
         {/* Spacer */}
         <div className="flex-1" />
 
+        {/* Error notification */}
+        {fileReadError && (
+          <div className="px-3 py-1.5 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg text-sm animate-pulse">
+            {fileReadError}
+          </div>
+        )}
+
         {/* Language Selector */}
         <div className="relative" ref={langDropdownRef}>
           <button
-            onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-            className="flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors text-sm"
+            onClick={() => setLangDropdownOpen(prev => !prev)}
+            className="flex items-center gap-1 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            title={t('language.label')}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-            </svg>
-            <span className="hidden md:inline">
-              {languages.find(l => l.code === i18n.language)?.flag} {' '}
-              {languages.find(l => l.code === i18n.language)?.label || 'English (US)'}
-            </span>
+            <IconGlobe />
+            <IconChevronDown />
           </button>
           {langDropdownOpen && (
-            <div className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1 z-50">
+            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[180px] py-1">
               {languages.map(lang => (
                 <button
                   key={lang.code}
-                  onClick={() => {
-                    i18n.changeLanguage(lang.code);
-                    setLangDropdownOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 ${
-                    i18n.language === lang.code ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300'
+                  onClick={() => changeLanguage(lang.code)}
+                  className={`w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                    i18n.language === lang.code ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' : ''
                   }`}
                 >
                   <span className="text-lg">{lang.flag}</span>
-                  {lang.label}
+                  <span>{lang.label}</span>
                 </button>
               ))}
             </div>
@@ -278,138 +475,153 @@ export default function App() {
 
         {/* Theme Toggle */}
         <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"
-          title={t('header.theme')}
+          onClick={() => setDarkMode(prev => !prev)}
+          className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          title={t('header.theme') + ' (Ctrl+D)'}
         >
-          {darkMode ? (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          )}
+          {darkMode ? <IconSun /> : <IconMoon />}
         </button>
 
         {/* About */}
         <button
           onClick={() => setAboutOpen(true)}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"
+          className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           title={t('header.about')}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <IconInfo />
         </button>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
+      {/* ─── Main Content ───────────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         {sidebarOpen && (
-          <aside className="w-64 bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-700 flex flex-col shrink-0 overflow-hidden">
-            <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+          <aside className="w-64 shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="font-semibold text-sm uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 {t('sidebar.recentFiles')}
               </h2>
               {recentFiles.length > 0 && (
                 <button
                   onClick={clearRecentFiles}
-                  className="text-xs text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-red-500"
+                  title={t('sidebar.clearAll')}
                 >
-                  {t('sidebar.clearAll')}
+                  <IconTrash />
                 </button>
               )}
             </div>
             <div className="flex-1 overflow-y-auto">
               {recentFiles.length === 0 ? (
-                <div className="p-4 text-sm text-gray-400 dark:text-gray-500 text-center">
+                <div className="px-4 py-8 text-center text-gray-400 dark:text-gray-500 text-sm">
                   {t('sidebar.noRecentFiles')}
                 </div>
               ) : (
-                recentFiles.map((file, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => openRecentFile(file)}
-                    className={`w-full text-left p-3 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-100 dark:border-gray-700/50 ${
-                      file.name === currentFileName ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span className="text-sm text-gray-700 dark:text-gray-300 truncate font-medium">
-                        {file.name}
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-400 dark:text-gray-500 mt-1 ml-6">
-                      {formatFileSize(file.size)} · {formatDate(file.lastOpened)}
-                    </div>
-                  </button>
-                ))
+                <ul className="py-1">
+                  {recentFiles.map((file, index) => (
+                    <li key={`${file.name}-${index}`} className="group">
+                      <button
+                        onClick={() => openRecentFile(file)}
+                        className={`w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm ${
+                          currentFileName === file.name ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''
+                        }`}
+                      >
+                        <IconFile />
+                        <span className="truncate flex-1">{file.name}</span>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); removeRecentFile(file.name); }}
+                          className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-all text-gray-400 hover:text-red-500"
+                          title="Remove"
+                        >
+                          <IconClose />
+                        </button>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               )}
+            </div>
+
+            {/* Shortcuts hint */}
+            <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500">
+              <div className="font-semibold mb-1">{t('shortcuts.title')}</div>
+              <div className="space-y-0.5">
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+O</kbd> {t('shortcuts.openFile')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+B</kbd> {t('shortcuts.toggleSidebar')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+D</kbd> {t('shortcuts.toggleDark')}</div>
+              </div>
             </div>
           </aside>
         )}
 
         {/* Main Area */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto bg-white dark:bg-gray-900 relative">
+        <main
+          ref={mainRef}
+          className="flex-1 overflow-y-auto"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+        >
+          {/* Drag overlay */}
           {isDragging && (
-            <div className="absolute inset-0 z-10 bg-blue-500/10 dark:bg-blue-500/20 border-4 border-dashed border-blue-500 flex items-center justify-center">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl text-center">
-                <svg className="w-16 h-16 mx-auto text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <p className="text-lg font-medium text-gray-700 dark:text-gray-300">{t('welcome.dropHere')}</p>
+            <div className="absolute inset-0 z-40 bg-blue-500/10 dark:bg-blue-400/10 border-2 border-dashed border-blue-500 dark:border-blue-400 rounded-lg m-2 flex flex-col items-center justify-center pointer-events-none">
+              <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-4">
+                <IconOpenFile />
               </div>
+              <p className="text-blue-600 dark:text-blue-400 font-medium text-lg">
+                {t('welcome.dropHere')}
+              </p>
             </div>
           )}
 
           {currentContent ? (
-            <div className="max-w-4xl mx-auto px-6 py-8">
+            <div className="flex flex-col h-full">
               {/* File info bar */}
-              <div className="mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
-                <span className="flex items-center gap-1">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  {t('reader.fileName')}: <strong className="text-gray-700 dark:text-gray-300">{currentFileName}</strong>
-                </span>
+              <div className="flex items-center gap-4 px-6 py-2 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400 shrink-0 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <IconFile />
+                  <span>{t('reader.fileName')}: <strong className="text-gray-700 dark:text-gray-300">{currentFileName}</strong></span>
+                </div>
                 <span>{t('reader.fileSize')}: {formatFileSize(currentFileSize)}</span>
-                <span>{t('reader.lastModified')}: {formatDate(currentFileModified)}</span>
+                <span>{t('reader.lastModified')}: {formatDate(currentFileModified, localeForDates)}</span>
                 <div className="flex-1" />
                 <button
                   onClick={closeFile}
-                  className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                  title="Close file"
+                  className="px-3 py-1 text-xs rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
+                  title={t('reader.closeFile')}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  {t('reader.closeFile')}
                 </button>
               </div>
 
               {/* Markdown Content */}
-              <article className="prose prose-gray dark:prose-invert max-w-none
-                prose-headings:scroll-mt-4
-                prose-a:text-blue-600 dark:prose-a:text-blue-400
-                prose-code:bg-gray-100 dark:prose-code:bg-gray-800
-                prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-                prose-img:rounded-lg
-                prose-table:border
-                prose-th:border prose-th:px-3 prose-th:py-2
-                prose-td:border prose-td:px-3 prose-td:py-2
-              ">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeHighlight]}
-                >
-                  {currentContent}
-                </ReactMarkdown>
-              </article>
+              <div className="flex-1 overflow-y-auto px-6 py-8">
+                <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                    components={{
+                      code({ className, children, ...props }) {
+                        const isInline = !className;
+                        if (isInline) {
+                          return (
+                            <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono" {...props}>
+                              {children}
+                            </code>
+                          );
+                        }
+                        return (
+                          <CodeBlock className={className} {...props}>
+                            {children}
+                          </CodeBlock>
+                        );
+                      },
+                    }}
+                  >
+                    {currentContent}
+                  </ReactMarkdown>
+                </article>
+              </div>
             </div>
           ) : (
             <WelcomeScreen onOpenFile={() => fileInputRef.current?.click()} />
@@ -417,51 +629,65 @@ export default function App() {
         </main>
       </div>
 
-      {/* About Dialog */}
+      {/* ─── About Dialog ───────────────────────────────────── */}
       {aboutOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setAboutOpen(false)}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setAboutOpen(false)}
+        >
           <div
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-8 text-white text-center">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl font-bold mx-auto mb-3">
+            {/* Header gradient */}
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-6 text-white text-center">
+              <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-3xl font-bold mx-auto mb-3 shadow-lg">
                 M
               </div>
               <h2 className="text-2xl font-bold">{t('app.name')}</h2>
-              <p className="text-blue-100 mt-1">{t('app.tagline')}</p>
+              <p className="text-white/80 mt-1">{t('app.tagline')}</p>
             </div>
-            <div className="px-6 py-5 space-y-3">
-              <div className="flex justify-between text-sm">
+
+            {/* Info */}
+            <div className="px-8 py-6 space-y-4">
+              <div className="flex justify-between items-center">
                 <span className="text-gray-500 dark:text-gray-400">{t('about.version')}</span>
-                <span className="font-medium text-gray-900 dark:text-white">0.0.2</span>
+                <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">{APP_VERSION}</span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between items-center">
                 <span className="text-gray-500 dark:text-gray-400">{t('about.author')}</span>
-                <a href="https://piboh.github.io/" target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
-                  PiBOH
+                <a
+                  href={APP_WEBSITE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                >
+                  {APP_AUTHOR}
                 </a>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500 dark:text-gray-400">{t('about.website')}</span>
-                <a href="https://piboh.github.io/" target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
-                  piboh.github.io
-                </a>
-              </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between items-center">
                 <span className="text-gray-500 dark:text-gray-400">{t('about.repository')}</span>
-                <a href="https://github.com/PiBOH/multimdreader" target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                <a
+                  href={APP_REPO}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                >
                   GitHub
                 </a>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700">
-                {t('about.description')}
-              </p>
+              <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                  {t('about.description')}
+                </p>
+              </div>
             </div>
-            <div className="px-6 pb-5">
+
+            {/* Close button */}
+            <div className="px-8 pb-6">
               <button
                 onClick={() => setAboutOpen(false)}
-                className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors font-medium text-sm"
+                className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium transition-colors"
               >
                 {t('about.close')}
               </button>
@@ -473,41 +699,43 @@ export default function App() {
   );
 }
 
+// ─── Welcome Screen Component ─────────────────────────────────────
 function WelcomeScreen({ onOpenFile }: { onOpenFile: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <div className="h-full flex items-center justify-center p-8">
+    <div className="flex items-center justify-center h-full p-8">
       <div className="text-center max-w-lg">
-        <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center text-white text-5xl font-bold mx-auto mb-6 shadow-lg shadow-blue-500/25">
+        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-5xl font-bold text-white mx-auto mb-6 shadow-xl">
           M
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           {t('welcome.title')}
-        </h2>
+        </h1>
         <p className="text-gray-500 dark:text-gray-400 mb-8 text-lg">
           {t('welcome.subtitle')}
         </p>
-        <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-10 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer group"
-          onClick={onOpenFile}
-        >
-          <svg className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-          </svg>
-          <p className="text-gray-500 dark:text-gray-400 mb-2 font-medium">
+        <div className="flex flex-col items-center gap-4">
+          <button
+            onClick={onOpenFile}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+          >
+            <IconOpenFile />
+            {t('welcome.clickToOpen')}
+          </button>
+          <div className="flex items-center gap-3 text-gray-400 dark:text-gray-500">
+            <div className="h-px w-12 bg-gray-300 dark:bg-gray-600" />
+            <span className="text-sm">{t('welcome.or')}</span>
+            <div className="h-px w-12 bg-gray-300 dark:bg-gray-600" />
+          </div>
+          <p className="text-gray-400 dark:text-gray-500 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
             {t('welcome.dropHere')}
           </p>
-          <p className="text-gray-400 dark:text-gray-500 mb-4">
-            {t('welcome.or')}
-          </p>
-          <span className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors font-medium">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            {t('welcome.clickToOpen')}
-          </span>
         </div>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
+        <p className="mt-8 text-xs text-gray-400 dark:text-gray-500">
           {t('welcome.supportedFormats')}
         </p>
       </div>

@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Lettore Markdown Multipiattaforma",
-    "version": "0.0.2"
+    "version": "0.0.3_ALPHA"
   },
   "header": {
     "openFile": "Apri File",
@@ -38,7 +38,8 @@
     "copied": "Copiato!",
     "fileName": "File",
     "fileSize": "Dimensione",
-    "lastModified": "Ultima modifica"
+    "lastModified": "Ultima modifica",
+    "closeFile": "Chiudi file"
   },
   "theme": {
     "light": "Chiaro",
@@ -57,5 +58,12 @@
     "fileReadError": "Errore durante la lettura del file",
     "unsupportedFile": "Formato file non supportato",
     "noFileSelected": "Nessun file selezionato"
+  },
+  "shortcuts": {
+    "title": "Scorciatoie da tastiera",
+    "openFile": "Apri file",
+    "toggleSidebar": "Barra laterale",
+    "toggleDark": "Tema scuro/chiaro",
+    "close": "Chiudi finestra"
   }
 }

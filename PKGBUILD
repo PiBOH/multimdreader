@@ -1,8 +1,7 @@
-# Maintainer: PiBOH <https://piboh.github.io/>
+# Maintainer: PiBOH
 # This PKGBUILD builds MultiMDReader from source for Arch Linux
-
 pkgname=multimdreader
-pkgver=0.0.2
+pkgver=0.0.3
 pkgrel=1
 pkgdesc="A cross-platform Markdown file reader - no installation required"
 arch=('x86_64')
@@ -15,20 +14,16 @@ sha256sums=('SKIP')
 
 build() {
     cd "${pkgname}-${pkgver}"
-    
     # Install frontend dependencies
     npm ci
-    
     # Build Tauri application
     cargo build --release --manifest-path src-tauri/Cargo.toml
 }
 
 package() {
     cd "${pkgname}-${pkgver}"
-    
     # Install binary
     install -Dm755 "src-tauri/target/release/multimdreader" "${pkgdir}/usr/bin/multimdreader"
-    
     # Install desktop entry
     install -Dm644 /dev/stdin "${pkgdir}/usr/share/applications/multimdreader.desktop" << EOF
 [Desktop Entry]
@@ -39,5 +34,6 @@ Icon=multimdreader
 Terminal=false
 Type=Application
 Categories=Office;TextEditor;Viewer;
+MimeType=text/markdown;text/x-markdown;
 EOF
 }

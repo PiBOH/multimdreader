@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Cross-Platform Markdown Reader",
-    "version": "0.0.2"
+    "version": "0.0.3_ALPHA"
   },
   "header": {
     "openFile": "Open File",
@@ -38,7 +38,8 @@
     "copied": "Copied!",
     "fileName": "File",
     "fileSize": "Size",
-    "lastModified": "Last modified"
+    "lastModified": "Last modified",
+    "closeFile": "Close file"
   },
   "theme": {
     "light": "Light",
@@ -57,5 +58,12 @@
     "fileReadError": "Error reading file",
     "unsupportedFile": "Unsupported file format",
     "noFileSelected": "No file selected"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "openFile": "Open file",
+    "toggleSidebar": "Toggle sidebar",
+    "toggleDark": "Toggle dark/light theme",
+    "close": "Close dialog"
   }
 }

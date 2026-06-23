@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Lecteur Markdown Multiplateforme",
-    "version": "0.0.2"
+    "version": "0.0.3_ALPHA"
   },
   "header": {
     "openFile": "Ouvrir un Fichier",
@@ -38,7 +38,8 @@
     "copied": "Copié !",
     "fileName": "Fichier",
     "fileSize": "Taille",
-    "lastModified": "Dernière modification"
+    "lastModified": "Dernière modification",
+    "closeFile": "Fermer le fichier"
   },
   "theme": {
     "light": "Clair",
@@ -57,5 +58,12 @@
     "fileReadError": "Erreur lors de la lecture du fichier",
     "unsupportedFile": "Format de fichier non pris en charge",
     "noFileSelected": "Aucun fichier sélectionné"
+  },
+  "shortcuts": {
+    "title": "Raccourcis clavier",
+    "openFile": "Ouvrir un fichier",
+    "toggleSidebar": "Barre latérale",
+    "toggleDark": "Basculer thème sombre/clair",
+    "close": "Fermer la boîte de dialogue"
   }
 }

@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Plattformübergreifender Markdown-Reader",
-    "version": "0.0.2"
+    "version": "0.0.3_ALPHA"
   },
   "header": {
     "openFile": "Datei öffnen",
@@ -20,7 +20,7 @@
     "subtitle": "Ihr plattformübergreifender Markdown-Reader",
     "dropHere": "Markdown-Datei hier ablegen",
     "or": "oder",
-    "clickToOpen": "Klicken Sie zum Öffnen einer Datei",
+    "clickToOpen": "Klicken Sie, um eine Datei zu öffnen",
     "supportedFormats": "Unterstützte Formate: .md, .markdown, .mdown, .mkd, .mkdn, .mdwn, .mdtxt, .mdtext, .txt"
   },
   "about": {
@@ -38,7 +38,8 @@
     "copied": "Kopiert!",
     "fileName": "Datei",
     "fileSize": "Größe",
-    "lastModified": "Zuletzt geändert"
+    "lastModified": "Zuletzt geändert",
+    "closeFile": "Datei schließen"
   },
   "theme": {
     "light": "Hell",
@@ -57,5 +58,12 @@
     "fileReadError": "Fehler beim Lesen der Datei",
     "unsupportedFile": "Nicht unterstütztes Dateiformat",
     "noFileSelected": "Keine Datei ausgewählt"
+  },
+  "shortcuts": {
+    "title": "Tastaturkürzel",
+    "openFile": "Datei öffnen",
+    "toggleSidebar": "Seitenleiste umschalten",
+    "toggleDark": "Dunkles/helles Design umschalten",
+    "close": "Dialog schließen"
   }
 }
