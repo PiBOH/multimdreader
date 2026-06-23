@@ -1,0 +1,61 @@
+{
+  "app": {
+    "name": "MultiMDReader",
+    "tagline": "Cross-Platform Markdown Reader",
+    "version": "0.0.2"
+  },
+  "header": {
+    "openFile": "Open File",
+    "toggleSidebar": "Sidebar",
+    "theme": "Theme",
+    "about": "About"
+  },
+  "sidebar": {
+    "recentFiles": "Recent Files",
+    "noRecentFiles": "No recent files",
+    "clearAll": "Clear all"
+  },
+  "welcome": {
+    "title": "Welcome to MultiMDReader",
+    "subtitle": "Your cross-platform Markdown reader",
+    "dropHere": "Drop a Markdown file here",
+    "or": "or",
+    "clickToOpen": "Click to open a file",
+    "supportedFormats": "Supported formats: .md, .markdown, .mdown, .mkd, .mkdn, .mdwn, .mdtxt, .mdtext, .txt"
+  },
+  "about": {
+    "title": "About MultiMDReader",
+    "version": "Version",
+    "author": "Author",
+    "website": "Website",
+    "repository": "Repository",
+    "description": "A cross-platform Markdown file reader, ready to use without installation. Available for Windows, macOS, and Linux.",
+    "close": "Close"
+  },
+  "reader": {
+    "noContent": "No content to display",
+    "copyCode": "Copy code",
+    "copied": "Copied!",
+    "fileName": "File",
+    "fileSize": "Size",
+    "lastModified": "Last modified"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "label": "Language",
+    "it": "Italian",
+    "enGB": "English (UK)",
+    "enUS": "English (US)",
+    "es": "Spanish",
+    "de": "German",
+    "fr": "French"
+  },
+  "errors": {
+    "fileReadError": "Error reading file",
+    "unsupportedFile": "Unsupported file format",
+    "noFileSelected": "No file selected"
+  }
+}

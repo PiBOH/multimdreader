@@ -1,0 +1,61 @@
+{
+  "app": {
+    "name": "MultiMDReader",
+    "tagline": "Lettore Markdown Multipiattaforma",
+    "version": "0.0.2"
+  },
+  "header": {
+    "openFile": "Apri File",
+    "toggleSidebar": "Barra laterale",
+    "theme": "Tema",
+    "about": "Info"
+  },
+  "sidebar": {
+    "recentFiles": "File Recenti",
+    "noRecentFiles": "Nessun file recente",
+    "clearAll": "Cancella tutto"
+  },
+  "welcome": {
+    "title": "Benvenuto in MultiMDReader",
+    "subtitle": "Il tuo lettore Markdown multipiattaforma",
+    "dropHere": "Trascina qui un file Markdown",
+    "or": "oppure",
+    "clickToOpen": "Clicca per aprire un file",
+    "supportedFormats": "Formati supportati: .md, .markdown, .mdown, .mkd, .mkdn, .mdwn, .mdtxt, .mdtext, .txt"
+  },
+  "about": {
+    "title": "Informazioni su MultiMDReader",
+    "version": "Versione",
+    "author": "Autore",
+    "website": "Sito Web",
+    "repository": "Repository",
+    "description": "Un lettore di file Markdown multipiattaforma, pronto all'uso senza installazione. Disponibile per Windows, macOS e Linux.",
+    "close": "Chiudi"
+  },
+  "reader": {
+    "noContent": "Nessun contenuto da visualizzare",
+    "copyCode": "Copia codice",
+    "copied": "Copiato!",
+    "fileName": "File",
+    "fileSize": "Dimensione",
+    "lastModified": "Ultima modifica"
+  },
+  "theme": {
+    "light": "Chiaro",
+    "dark": "Scuro"
+  },
+  "language": {
+    "label": "Lingua",
+    "it": "Italiano",
+    "enGB": "Inglese (UK)",
+    "enUS": "Inglese (US)",
+    "es": "Spagnolo",
+    "de": "Tedesco",
+    "fr": "Francese"
+  },
+  "errors": {
+    "fileReadError": "Errore durante la lettura del file",
+    "unsupportedFile": "Formato file non supportato",
+    "noFileSelected": "Nessun file selezionato"
+  }
+}
