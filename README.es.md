@@ -1,3 +1,12 @@
+<!-- immagine logo generata con gemini (google) -->
+<div align="center">
+  <a href="https://piboh.github.io/multimdreader">
+     <img width="250" height="250" alt="icon" src="https://github.com/PiBOH/multimdreader/blob/main/icon.png" />
+
+**Descarga la última versión [aquí](https://github.com/PiBOH/multimdreader/releases/latest)**
+
+</div>
+
 **Versión 0.0.5_STABLE** · Autor: [PiBOH](https://piboh.github.io/)
 
 > 🔤 Un lector de archivos Markdown multiplataforma. No requiere instalación — solo descarga y ejecuta.
@@ -37,7 +46,8 @@ Descarga la última versión desde la [página de Releases](https://github.com/P
 
 ## 🌐 Pruébalo Online
 
-También puedes probar MultiMDReader directamente en tu navegador: [piboh.github.io/multimdreader](https://piboh.github.io/multimdreader/)
+- **Dashboard**: [piboh.github.io/multimdreader](https://piboh.github.io/multimdreader/) — página del proyecto
+- **Demo en vivo**: [piboh.github.io/multimdreader/demo](https://piboh.github.io/multimdreader/demo/) — prueba el lector en tu navegador
 
 ## 🚀 Compilación desde el Código Fuente
 
@@ -93,7 +103,9 @@ Cada flujo se ejecuta al subir un tag (`v*`) — compila las apps de escritorio 
 
 ### Flujo de Deploy Pages (`.github/workflows/deploy-pages.yml`)
 
-Se ejecuta en cada push a `main` — despliega automáticamente la app web en GitHub Pages.
+Se ejecuta en cada push a `main` — despliega dashboard y demo en GitHub Pages:
+- `/` → Dashboard del proyecto
+- `/demo/` → Demo en vivo de la app web
 
 ## 🛠️ Stack Tecnológico
 

@@ -1,4 +1,4 @@
-name: Deploy Demo to GitHub Pages
+name: Deploy GitHub Pages
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
       - 'docs/**'
       - '.github/workflows/release-*.yml'
       - '.github/workflows/build.yml'
-      - '.github/workflows/deploy-pages-dashboard.yml'
       - 'src-tauri/**'
       - 'PKGBUILD'
   workflow_dispatch:
@@ -19,12 +18,12 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages-demo"
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build Demo for Pages
+    name: Build & Deploy Pages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -38,13 +37,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build web app (demo)
+      # ─── Build demo app → /demo/ ─────────────────────
+      - name: Build demo app
         run: npm run build
         env:
-          VITE_BASE: /multimdreader/
+          VITE_BASE: /multimdreader/demo/
 
-      - name: Add .nojekyll file
-        run: touch dist/.nojekyll
+      # ─── Assemble combined deploy folder ──────────────
+      - name: Assemble deploy folder
+        run: |
+          mkdir -p deploy/demo
+          # Dashboard at root
+          cp -r dashboard/* deploy/
+          # Demo app in /demo/
+          cp -r dist/* deploy/demo/
+          # .nojekyll
+          touch deploy/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -52,10 +60,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/
+          path: deploy/
 
   deploy:
-    name: Deploy Demo to Pages
+    name: Deploy to Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

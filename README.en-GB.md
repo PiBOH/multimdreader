@@ -1,3 +1,12 @@
+<!-- immagine logo generata con gemini (google) -->
+<div align="center">
+  <a href="https://piboh.github.io/multimdreader">
+     <img width="250" height="250" alt="icon" src="https://github.com/PiBOH/multimdreader/blob/main/icon.png" />
+
+**Download the latest release [here](https://github.com/PiBOH/multimdreader/releases/latest)**
+
+</div>
+
 **Version 0.0.5_STABLE** · Author: [PiBOH](https://piboh.github.io/)
 
 > 🔤 A cross-platform Markdown file reader. No installation required — just download and run.
@@ -37,7 +46,8 @@ Download the latest release from the [Releases page](https://github.com/PiBOH/mu
 
 ## 🌐 Try Online
 
-You can also try MultiMDReader directly in your browser: [piboh.github.io/multimdreader](https://piboh.github.io/multimdreader/)
+- **Dashboard**: [piboh.github.io/multimdreader](https://piboh.github.io/multimdreader/) — project landing page
+- **Live Demo**: [piboh.github.io/multimdreader/demo](https://piboh.github.io/multimdreader/demo/) — try the reader in your browser
 
 ## 🚀 Building from Source
 
@@ -93,7 +103,9 @@ Each workflow runs on tag push (`v*`) — builds desktop apps for the specific p
 
 ### Deploy Pages Workflow (`.github/workflows/deploy-pages.yml`)
 
-Runs on every push to `main` — deploys the web app to GitHub Pages automatically.
+Runs on every push to `main` — deploys both the dashboard and demo to GitHub Pages:
+- `/` → Project dashboard/landing page
+- `/demo/` → Live web app demo
 
 ## 🛠️ Tech Stack
 
