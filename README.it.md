@@ -2,7 +2,7 @@
 
 > 🔤 Un lettore di file Markdown multipiattaforma. Nessuna installazione richiesta — scarica ed esegui.
 
-[![Build Web](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml) [![Release](https://github.com/PiBOH/multimdreader/actions/workflows/release.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
+[![Build Web](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml) [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
 
 🌐 Leggi in: 🇮🇹 Italiano · [🇬🇧 English (UK)](README.en-GB.md) · [🇺🇸 English (US)](README.md) · [🇪🇸 Español](README.es.md) · [🇩🇪 Deutsch](README.de.md) · [🇫🇷 Français](README.fr.md)
 
@@ -41,7 +41,7 @@ Puoi provare MultiMDReader direttamente nel tuo browser: [piboh.github.io/multim
 
 ### Prerequisiti
 
-* [Node.js](https://nodejs.org/) 18+
+* [Node.js](https://nodejs.org/) 22+
 * [Rust](https://www.rust-lang.org/tools/install) (per le build desktop)
 * [Tauri CLI](https://tauri.app/guides/getting-started/setup/) (per le build desktop)
 
@@ -56,8 +56,8 @@ npm run build
 ### Build Desktop (Tauri)
 
 ```bash
-# Installa Tauri CLI
-npm install -g @tauri-apps/cli
+# Installa Tauri CLI (incluso nelle devDependencies)
+npm install
 
 # Sviluppo
 npm run tauri dev
@@ -70,7 +70,7 @@ npm run tauri build
 ### Generazione Icone
 
 ```bash
-npx @tauri-apps/cli icon public/icon.png
+npx tauri icon public/icon.png
 ```
 
 ## 🏗️ Workflow CI/CD
@@ -79,15 +79,15 @@ npx @tauri-apps/cli icon public/icon.png
 
 Eseguito ad ogni push/PR su `main` — compila l'app web per verificare che si compili correttamente.
 
-### Workflow Release (`.github/workflows/release.yml`)
+### Workflow Release (per SO)
 
-Eseguito al push di un tag (`v*`) — compila le app desktop per tutte le piattaforme:
+Ogni workflow viene eseguito al push di un tag (`v*`) — compila le app desktop per la piattaforma specifica:
 
-* **Windows**: installer `.exe` + `.exe` portatile
-* **macOS**: `.dmg` per Intel (x64) e Apple Silicon (aarch64)
-* **Linux Debian**: pacchetto `.deb`
-* **Linux AppImage**: `.AppImage` portatile (funziona su tutte le distro)
-* **Linux Arch**: pacchetto `.pkg.tar.zst`
+| Workflow | Piattaforma | Output |
+|----------|-------------|--------|
+| `release-windows.yml` | Windows | installer `.exe` + `.exe` portatile |
+| `release-macos.yml` | macOS Intel + Apple Silicon | `.dmg` per entrambe le architetture |
+| `release-linux.yml` | Linux | `.deb`, `.AppImage`, Arch `.pkg.tar.zst` |
 
 ### Workflow Deploy Pages (`.github/workflows/deploy-pages.yml`)
 

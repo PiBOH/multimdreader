@@ -1,0 +1,79 @@
+name: Release Windows
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Generate Tauri icons
+        run: npx tauri icon public/icon.png
+        continue-on-error: true
+
+      - name: Build Tauri app (Windows)
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'MultiMDReader ${{ github.ref_name }}'
+          releaseBody: |
+            ## MultiMDReader ${{ github.ref_name }}
+
+            🔤 A cross-platform Markdown file reader. No installation required.
+
+            ### 📥 Downloads
+
+            See all assets below for all platforms.
+
+            | Platform | File | Instructions |
+            |----------|------|-------------|
+            | **Windows** | `MultiMDReader_*_x64-setup.exe` | Double-click to install & run |
+            | **Windows (Portable)** | `multimdreader.exe` | Just run the .exe — no install needed |
+            | **macOS (Intel)** | `MultiMDReader_*_x64.dmg` | Open .dmg → drag to Applications |
+            | **macOS (Apple Silicon)** | `MultiMDReader_*_aarch64.dmg` | Open .dmg → drag to Applications |
+            | **Linux (Debian/Ubuntu)** | `MultiMDReader_*_amd64.deb` | `sudo dpkg -i *.deb` |
+            | **Linux (All distros)** | `MultiMDReader_*_amd64.AppImage` | `chmod +x && ./MultiMDReader_*.AppImage` |
+            | **Linux (Arch)** | `multimdreader-*.pkg.tar.zst` | `sudo pacman -U *.pkg.tar.zst` |
+
+            ### 🌐 Supported Languages
+            🇮🇹 Italiano · 🇬🇧 English (UK) · 🇺🇸 English (US) · 🇪🇸 Español · 🇩🇪 Deutsch · 🇫🇷 Français
+
+            ---
+            Author: [PiBOH](https://piboh.github.io/) · Repository: [GitHub](https://github.com/PiBOH/multimdreader)
+          releaseDraft: true
+          prerelease: false
+
+      - name: Upload portable exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: multimdreader-windows-portable
+          path: src-tauri/target/release/multimdreader.exe
+          retention-days: 30

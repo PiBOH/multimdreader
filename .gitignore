@@ -31,9 +31,3 @@ npm-debug.log*
 .logo-images
 .logo-images/
 .logo-images/*
-.old-releases
-.old-releases/
-.old-releases/*
-.releases
-.releases/
-.releases/*
