@@ -1,9 +1,10 @@
 <!-- immagine logo generata con gemini (google) -->
 <div align="center">
   <a href="https://piboh.github.io/multimdreader">
-     <img width="250" height="250" alt="icon" src="icon.png" />
+     <img width="250" height="250" alt="icon" src="https://github.com/PiBOH/multimdreader/blob/main/icon.png" />
 
-**Version 0.0.5_STABLE**
+**Download the latest release [here](https://github.com/PiBOH/multimdreader/releases/latest)**
+
 </div>
 
 > 🔤 A cross-platform Markdown file reader. No installation required — just download and run.
@@ -134,4 +135,4 @@ MIT © 2026 [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Author**: [PiBOH](https://piboh.github.io/)  
-**Version**: [0.0.5_STABLE](https://github.com/PiBOH/multimdreader/releases/tag/0.0.5_STABLE)
+**Version**: [0.0.5_STABLE](https://github.com/PiBOH/multimdreader/releases/latest)
