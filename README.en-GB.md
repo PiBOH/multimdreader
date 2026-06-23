@@ -4,7 +4,7 @@
 
 [![Build Web](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml) [![Release](https://github.com/PiBOH/multimdreader/actions/workflows/release.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
 
-🌐 Read this in: [🇮🇹 Italiano](README.it.md) · [🇬🇧 English (UK)](README.en-GB.md) · 🇺🇸 English (US) · [🇪🇸 Español](README.es.md) · [🇩🇪 Deutsch](README.de.md) · [🇫🇷 Français](README.fr.md)
+🌐 Read this in: [🇮🇹 Italiano](README.it.md) · 🇬🇧 English (UK) · [🇺🇸 English (US)](README.md) · [🇪🇸 Español](README.es.md) · [🇩🇪 Deutsch](README.de.md) · [🇫🇷 Français](README.fr.md)
 
 ## ✨ Features
 
@@ -112,7 +112,7 @@ Runs on every push to `main` — deploys the web app to GitHub Pages automatical
 | `Ctrl+O`   | Open file           |
 | `Ctrl+B`   | Toggle sidebar      |
 | `Ctrl+D`   | Toggle dark/light   |
-| `Escape`    | Close dialog        |
+| `Escape`    | Close dialogue      |
 
 ## 📝 License
 
