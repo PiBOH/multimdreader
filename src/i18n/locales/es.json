@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Lector Markdown Multiplataforma",
-    "version": "0.0.4_BETA"
+    "version": "0.0.5_STABLE"
   },
   "header": {
     "openFile": "Abrir Archivo",
@@ -46,13 +46,12 @@
     "dark": "Oscuro"
   },
   "language": {
-    "label": "Idioma",
     "it": "Italiano",
-    "enGB": "Inglés (UK)",
-    "enUS": "Inglés (US)",
+    "enGB": "English (UK)",
+    "enUS": "English (US)",
     "es": "Español",
-    "de": "Alemán",
-    "fr": "Francés"
+    "de": "Deutsch",
+    "fr": "Français"
   },
   "errors": {
     "fileReadError": "Error al leer el archivo",

@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Cross-Platform Markdown Reader",
-    "version": "0.0.4_BETA"
+    "version": "0.0.5_STABLE"
   },
   "header": {
     "openFile": "Open File",
@@ -46,13 +46,12 @@
     "dark": "Dark"
   },
   "language": {
-    "label": "Language",
-    "it": "Italian",
+    "it": "Italiano",
     "enGB": "English (UK)",
     "enUS": "English (US)",
-    "es": "Spanish",
-    "de": "German",
-    "fr": "French"
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français"
   },
   "errors": {
     "fileReadError": "Error reading file",

@@ -1,4 +1,4 @@
-**Version 0.0.4_BETA** · Autor: [PiBOH](https://piboh.github.io/)
+**Version 0.0.5_STABLE** · Autor: [PiBOH](https://piboh.github.io/)
 
 > 🔤 Ein plattformübergreifender Markdown-Dateireader. Keine Installation erforderlich — einfach herunterladen und starten.
 
@@ -124,4 +124,4 @@ MIT © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Autor**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.0.4_BETA
+**Version**: 0.0.5_STABLE

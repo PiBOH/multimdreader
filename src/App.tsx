@@ -6,7 +6,7 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.0.4_BETA';
+const APP_VERSION = '0.0.5_STABLE';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
@@ -449,19 +449,19 @@ export default function App() {
         <div className="relative" ref={langDropdownRef}>
           <button
             onClick={() => setLangDropdownOpen(prev => !prev)}
-            className="flex items-center gap-1 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            title={t('language.label')}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm"
           >
             <IconGlobe />
+            <span className="max-w-[120px] truncate">{languages.find(l => l.code === i18n.language)?.label || 'English (US)'}</span>
             <IconChevronDown />
           </button>
           {langDropdownOpen && (
-            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[180px] py-1">
+            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[200px] py-1">
               {languages.map(lang => (
                 <button
                   key={lang.code}
                   onClick={() => changeLanguage(lang.code)}
-                  className={`w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                  className={`w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm ${
                     i18n.language === lang.code ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' : ''
                   }`}
                 >

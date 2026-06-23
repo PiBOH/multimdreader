@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.0.5_STABLE] — 2025-06-23
+
+### ✨ New Features
+
+- **Added project dashboard page** — a beautiful, dark/light-mode landing page for the project deployed to GitHub Pages at `piboh.github.io/multimdreader/dashboard/`, featuring:
+  - Hero section with gradient branding and download links
+  - About section with feature cards
+  - Download section per platform (Windows, macOS, Linux)
+  - Supported languages showcase
+  - Changelog preview
+  - Keyboard shortcuts reference
+  - Repository structure diagram
+  - Sticky navigation with theme toggle
+- **Created `deploy-pages-dashboard.yml`** workflow — deploys the `dashboard/` folder to GitHub Pages on changes
+
+### 🔧 Refactoring
+
+- **Renamed `deploy-pages.yml` → `deploy-pages-demo.yml`** — deploys the live web app demo to GitHub Pages
+- Separated dashboard deployment from demo deployment into independent workflows with separate concurrency groups
+
+### 📝 Documentation
+
+- Updated all 6 READMEs with new badge for `deploy-pages-dashboard.yml`
+- Updated CI/CD section in all READMEs to document both Pages workflows
+- Updated all version references to `0.0.5_STABLE`
+
+---
+
 ## [0.0.4_BETA] — 2025-06-23
 
 ### 🐛 Bug Fixes — CI/CD (Critical)
@@ -125,6 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.0.5_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.5_STABLE
 [0.0.4_BETA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.4_BETA
 [0.0.3_ALPHA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.3_ALPHA
 [0.0.2]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.2

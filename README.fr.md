@@ -1,4 +1,4 @@
-**Version 0.0.4_BETA** · Auteur : [PiBOH](https://piboh.github.io/)
+**Version 0.0.5_STABLE** · Auteur : [PiBOH](https://piboh.github.io/)
 
 > 🔤 Un lecteur de fichiers Markdown multiplateforme. Aucune installation requise — téléchargez et lancez.
 
@@ -124,4 +124,4 @@ MIT © [PiBOH](https://piboh.github.io/)
 
 **Dépôt** : [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Auteur** : [PiBOH](https://piboh.github.io/)  
-**Version** : 0.0.4_BETA
+**Version** : 0.0.5_STABLE

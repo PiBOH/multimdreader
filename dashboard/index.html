@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MultiMDReader — Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="https://piboh.github.io/multimdreader/dashboard/favicon.png" type="image/png" />
+</head>
+<body class="dark">
+
+  <!-- ========== HERO ========== -->
+  <header id="top">
+    <div class="hero">
+      <div class="hero-logo">M</div>
+      <h1>MultiMDReader</h1>
+      <p class="hero-tagline">🔤 A cross-platform Markdown file reader.<br/>No installation required — just download and run.</p>
+      <p class="hero-version">v<span id="version-display">0.0.5_STABLE</span></p>
+      <div class="hero-buttons">
+        <a href="#download" class="btn btn-primary">⬇ Download</a>
+        <a href="https://github.com/PiBOH/multimdreader" target="_blank" rel="noopener" class="btn btn-secondary">📂 Repository</a>
+        <a href="https://piboh.github.io/multimdreader/" class="btn btn-secondary">🖥️ Try Online</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== NAV ========== -->
+  <nav>
+    <a href="#top">Home</a>
+    <a href="#about">About</a>
+    <a href="#features">Features</a>
+    <a href="#download">Download</a>
+    <a href="#languages">Languages</a>
+    <a href="#changelog">Changelog</a>
+    <a href="#shortcuts">Shortcuts</a>
+    <a href="#structure">Structure</a>
+    <span class="nav-spacer"></span>
+    <button id="theme-toggle" title="Toggle theme">🌙</button>
+  </nav>
+
+  <!-- ========== ABOUT ========== -->
+  <div id="about" class="section">
+    <h2><span>▶</span> About MultiMDReader</h2>
+    <p>
+      <strong>MultiMDReader</strong> is a <strong>cross-platform Markdown file reader</strong> built with
+      Tauri v2, React 19, TypeScript and Tailwind CSS 4.
+      Developed by <a href="https://github.com/PiBOH" target="_blank" rel="noopener">PiBOH</a>.
+    </p>
+    <p>
+      Just download the executable for your platform and open any Markdown file —
+      <strong>no installation required</strong>. Available for <strong>Windows</strong>, <strong>macOS</strong>,
+      and <strong>Linux</strong> (Debian, Arch, and more).
+    </p>
+    <div class="card-grid">
+      <div class="card">
+        <p class="card-icon">📖</p>
+        <h3>GitHub-style Rendering</h3>
+        <p>Beautiful Markdown rendering with tables, task lists, strikethrough and autolinks.</p>
+      </div>
+      <div class="card">
+        <p class="card-icon">🎨</p>
+        <h3>Syntax Highlighting</h3>
+        <p>100+ languages supported with highlight.js and a one-click copy button.</p>
+      </div>
+      <div class="card">
+        <p class="card-icon">🌐</p>
+        <h3>6 Languages</h3>
+        <p>🇮🇹 Italiano · 🇬🇧 English (UK) · 🇺🇸 English (US) · 🇪🇸 Español · 🇩🇪 Deutsch · 🇫🇷 Français</p>
+      </div>
+      <div class="card">
+        <p class="card-icon">🌙</p>
+        <h3>Dark / Light Mode</h3>
+        <p>System preference detection with manual toggle. Keyboard shortcut <code>Ctrl+D</code>.</p>
+      </div>
+      <div class="card">
+        <p class="card-icon">📂</p>
+        <h3>Recent Files</h3>
+        <p>Persistent sidebar with up to 20 recent files. Drag & drop to open.</p>
+      </div>
+      <div class="card">
+        <p class="card-icon">⚡</p>
+        <h3>No Installation</h3>
+        <p>Download and run. <code>.exe</code>, <code>.dmg</code>, <code>.deb</code>, <code>.AppImage</code>, <code>.pkg.tar.zst</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FEATURES ========== -->
+  <div id="features" class="section">
+    <h2><span>▶</span> Features</h2>
+    <div class="feature-list">
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>Read Markdown files with beautiful, GitHub-style rendering</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>Syntax highlighting for code blocks (100+ languages)</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>6 languages supported with automatic detection</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>Dark / Light mode with system preference detection</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>Recent files sidebar with persistent history (localStorage)</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>Drag & drop support for opening files</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>GFM support: Tables, task lists, strikethrough, autolinks</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>Cross-platform: Windows, macOS, Linux</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>Copy code button on every code block</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-check">✓</span>
+        <span>Keyboard shortcuts: Ctrl+O, Ctrl+B, Ctrl+D, Escape</span>
+      </div>
+    </div>
+    <p class="note">⚠️ <strong>Testing notice:</strong> Only Windows releases have been tested by the author. macOS and Linux builds are provided as-is.</p>
+  </div>
+
+  <!-- ========== DOWNLOAD ========== -->
+  <div id="download" class="section">
+    <h2><span>▶</span> Download</h2>
+    <p>
+      Current version: <strong><span id="dl-version">0.0.5_STABLE</span></strong>
+      · All links point to the latest release on GitHub.
+    </p>
+
+    <div class="card-grid">
+      <div class="card download-card">
+        <p class="card-icon">🪟</p>
+        <h3>Windows</h3>
+        <p><strong>Installer</strong>: <code>MultiMDReader_*_x64-setup.exe</code></p>
+        <p><strong>Portable</strong>: <code>multimdreader.exe</code> — no install needed</p>
+        <a href="https://github.com/PiBOH/multimdreader/releases/latest" class="btn btn-primary">⬇ Download for Windows</a>
+      </div>
+      <div class="card download-card">
+        <p class="card-icon">🍎</p>
+        <h3>macOS</h3>
+        <p><strong>Intel</strong>: <code>MultiMDReader_*_x64.dmg</code></p>
+        <p><strong>Apple Silicon</strong>: <code>MultiMDReader_*_aarch64.dmg</code></p>
+        <a href="https://github.com/PiBOH/multimdreader/releases/latest" class="btn btn-primary">⬇ Download for macOS</a>
+      </div>
+      <div class="card download-card">
+        <p class="card-icon">🐧</p>
+        <h3>Linux</h3>
+        <p><strong>Debian</strong>: <code>.deb</code> · <strong>All distros</strong>: <code>.AppImage</code> · <strong>Arch</strong>: <code>.pkg.tar.zst</code></p>
+        <a href="https://github.com/PiBOH/multimdreader/releases/latest" class="btn btn-primary">⬇ Download for Linux</a>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin-top:1.5rem;">
+      <a href="https://github.com/PiBOH/multimdreader/releases" target="_blank" rel="noopener">📋 View all releases →</a>
+    </p>
+  </div>
+
+  <!-- ========== LANGUAGES ========== -->
+  <div id="languages" class="section">
+    <h2><span>▶</span> Supported Languages</h2>
+    <p>MultiMDReader speaks your language. The interface is fully translated in 6 languages:</p>
+    <div class="lang-grid">
+      <div class="lang-item">🇮🇹 <strong>Italiano</strong></div>
+      <div class="lang-item">🇬🇧 <strong>English (UK)</strong></div>
+      <div class="lang-item">🇺🇸 <strong>English (US)</strong></div>
+      <div class="lang-item">🇪🇸 <strong>Español</strong></div>
+      <div class="lang-item">🇩🇪 <strong>Deutsch</strong></div>
+      <div class="lang-item">🇫🇷 <strong>Français</strong></div>
+    </div>
+    <p>The language is automatically detected from your system settings and can be changed at any time from the app.</p>
+  </div>
+
+  <!-- ========== CHANGELOG ========== -->
+  <div id="changelog" class="section">
+    <h2><span>▶</span> Changelog</h2>
+    <p>Fetched live from the repository — always up to date.</p>
+    <div id="changelog-content">
+      <article>
+        <h3>[0.0.5_STABLE]</h3>
+        <ul>
+          <li>Added project dashboard page deployed to GitHub Pages</li>
+          <li>Renamed <code>deploy-pages.yml</code> → <code>deploy-pages-demo.yml</code></li>
+          <li>Created <code>deploy-pages-dashboard.yml</code> for the dashboard</li>
+          <li>Updated all version references to <code>0.0.5_STABLE</code></li>
+        </ul>
+        <h3>[0.0.4_BETA]</h3>
+        <ul>
+          <li>Fixed <code>multimdreader_lib</code> → <code>multimdreader</code> crate name in <code>main.rs</code></li>
+          <li>Replaced <code>tauri-action@v0</code> with direct <code>npx tauri build</code></li>
+          <li>Removed unused Tauri plugins and simplified Rust backend</li>
+          <li>Removed <code>vite-plugin-singlefile</code> (incompatible with Tauri)</li>
+          <li>Split release workflow into per-OS workflows</li>
+        </ul>
+        <h3>[0.0.3_ALPHA]</h3>
+        <ul>
+          <li>Code block copy button, remove individual recent files</li>
+          <li>Fixed identical en-GB/en-US locales, FileReader error handling</li>
+          <li>Multilingual READMEs (6 languages)</li>
+          <li>i18n locale-aware date formatting</li>
+        </ul>
+        <h3>[0.0.2]</h3>
+        <ul>
+          <li>Initial public release with Tauri v2</li>
+        </ul>
+      </article>
+    </div>
+    <p><a href="https://github.com/PiBOH/multimdreader/blob/main/CHANGELOG.md" target="_blank" rel="noopener">📋 View full changelog on GitHub →</a></p>
+  </div>
+
+  <!-- ========== SHORTCUTS ========== -->
+  <div id="shortcuts" class="section">
+    <h2><span>▶</span> Keyboard Shortcuts</h2>
+    <table class="shortcuts-table">
+      <thead>
+        <tr><th>Shortcut</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>Open file</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>B</kbd></td><td>Toggle sidebar</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>Toggle dark / light mode</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Close dialog</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========== STRUCTURE ========== -->
+  <div id="structure" class="section">
+    <h2><span>▶</span> Repository Structure</h2>
+    <p>Auto-generated from the project layout.</p>
+    <div class="struct-grid">
+      <div>
+        <h3>Source</h3>
+        <pre><code>multimdreader/
+├── .github/workflows/
+│   ├── build.yml
+│   ├── deploy-pages-demo.yml
+│   ├── deploy-pages-dashboard.yml
+│   ├── release-windows.yml
+│   ├── release-macos.yml
+│   └── release-linux.yml
+├── dashboard/
+│   ├── index.html
+│   └── style.css
+├── public/
+│   └── icon.png
+├── src/
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── index.css
+│   └── i18n/
+│       ├── index.ts
+│       └── locales/
+│           ├── it.json
+│           ├── en-GB.json
+│           ├── en-US.json
+│           ├── es.json
+│           ├── de.json
+│           └── fr.json
+├── src-tauri/
+│   ├── Cargo.toml
+│   ├── build.rs
+│   ├── tauri.conf.json
+│   ├── capabilities/default.json
+│   └── src/
+│       ├── main.rs
+│       └── lib.rs
+├── CHANGELOG.md
+├── LICENSE
+├── PKGBUILD
+├── README.md (+ 5 translations)
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts</code></pre>
+      </div>
+      <div>
+        <h3>Tech Stack</h3>
+        <pre><code>Frontend:
+  · React 19
+  · TypeScript
+  · Tailwind CSS 4
+
+Markdown:
+  · react-markdown
+  · remark-gfm
+  · rehype-highlight
+  · highlight.js
+
+i18n:
+  · i18next
+  · react-i18next
+  · i18next-browser-languagedetector
+
+Desktop:
+  · Tauri v2 (Rust)
+
+Build:
+  · Vite
+  · GitHub Actions</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <div class="hero-logo small">M</div>
+        <span>MultiMDReader</span>
+      </div>
+      <p>Author: <a href="https://piboh.github.io/" target="_blank" rel="noopener">PiBOH</a> · Repository: <a href="https://github.com/PiBOH/multimdreader" target="_blank" rel="noopener">GitHub</a> · License: MIT</p>
+      <p class="footer-version">v0.0.5_STABLE</p>
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    function setTheme(dark) {
+      document.body.classList.toggle('dark', dark);
+      document.body.classList.toggle('light', !dark);
+      themeBtn.textContent = dark ? '🌙' : '☀️';
+      localStorage.setItem('multimdreader-dashboard-theme', dark ? 'dark' : 'light');
+    }
+    const savedTheme = localStorage.getItem('multimdreader-dashboard-theme');
+    if (savedTheme) setTheme(savedTheme === 'dark');
+    else setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    themeBtn.addEventListener('click', () => setTheme(!document.body.classList.contains('dark')));
+
+    // Smooth scroll
+    document.querySelectorAll('nav a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,15 +1,11 @@
-name: Deploy to GitHub Pages
+name: Deploy Dashboard to GitHub Pages
 
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/workflows/release-*.yml'
-      - '.github/workflows/build.yml'
-      - 'src-tauri/**'
-      - 'PKGBUILD'
+    paths:
+      - 'dashboard/**'
+      - '.github/workflows/deploy-pages-dashboard.yml'
   workflow_dispatch:
 
 permissions:
@@ -18,43 +14,27 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-dashboard"
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build for Pages
+    name: Build Dashboard for Pages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build web app
-        run: npm run build
-        env:
-          VITE_BASE: /multimdreader/
-
-      - name: Add .nojekyll file
-        run: touch dist/.nojekyll
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Upload dashboard artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/
+          path: dashboard/
 
   deploy:
-    name: Deploy to Pages
+    name: Deploy Dashboard to Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

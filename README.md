@@ -1,8 +1,8 @@
-**Version 0.0.4_BETA** · Author: [PiBOH](https://piboh.github.io/)
+**Version 0.0.5_STABLE** · Author: [PiBOH](https://piboh.github.io/)
 
 > 🔤 A cross-platform Markdown file reader. No installation required — just download and run.
 
-[![Build Web](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml) [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
+[![Build Web](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml) [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Demo](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages-demo.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages-demo.yml) [![Deploy Dashboard](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages-dashboard.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages-dashboard.yml)
 
 🌐 Read this in: [🇮🇹 Italiano](README.it.md) · [🇬🇧 English (UK)](README.en-GB.md) · 🇺🇸 English (US) · [🇪🇸 Español](README.es.md) · [🇩🇪 Deutsch](README.de.md) · [🇫🇷 Français](README.fr.md)
 
@@ -91,9 +91,13 @@ Each workflow runs on tag push (`v*`) — builds desktop apps for the specific p
 | `release-macos.yml` | macOS Intel + Apple Silicon | `.dmg` for both architectures |
 | `release-linux.yml` | Linux | `.deb`, `.AppImage`, Arch `.pkg.tar.zst` |
 
-### Deploy Pages Workflow (`.github/workflows/deploy-pages.yml`)
+### Deploy Demo Workflow (`.github/workflows/deploy-pages-demo.yml`)
 
-Runs on every push to `main` — deploys the web app to GitHub Pages automatically.
+Runs on every push to `main` — deploys the web app (live demo) to GitHub Pages automatically.
+
+### Deploy Dashboard Workflow (`.github/workflows/deploy-pages-dashboard.yml`)
+
+Runs on every push to `main` that changes the `dashboard/` folder — deploys the project dashboard/landing page to GitHub Pages.
 
 ## 🛠️ Tech Stack
 
@@ -124,4 +128,4 @@ MIT © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Author**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.0.4_BETA
+**Version**: 0.0.5_STABLE
