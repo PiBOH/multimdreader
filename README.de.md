@@ -7,7 +7,7 @@
 
 </div>
 
-**Version 0.0.5_STABLE** · Autor: [PiBOH](https://piboh.github.io/)
+**Version 0.0.6_STABLE** · Autor: [PiBOH](https://piboh.github.io/)
 
 > 🔤 Ein plattformübergreifender Markdown-Dateireader. Keine Installation erforderlich — einfach herunterladen und starten.
 
@@ -20,6 +20,7 @@
 * 📖 **Markdown-Dateien lesen** mit schönem, GitHub-artigem Rendering
 * 🎨 **Syntax-Hervorhebung** für Code-Blöcke (100+ Sprachen)
 * 🌐 **6 Sprachen unterstützt**: 🇮🇹 Italiano, 🇬🇧 English (UK), 🇺🇸 English (US), 🇪🇸 Español, 🇩🇪 Deutsch, 🇫🇷 Français
+  *(Hinweis: Übersetzungen außer Italienisch sind möglicherweise nicht zu 100 % genau)*
 * 🌙 **Dunkel-/Hell-Modus** mit Erkennung der Systemeinstellungen
 * 📂 **Seitenleiste für letzte Dateien** mit persistentem Verlauf
 * 🖱️ **Drag & Drop** zum Öffnen von Dateien
@@ -136,4 +137,4 @@ MIT © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Autor**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.0.5_STABLE
+**Version**: 0.0.6_STABLE

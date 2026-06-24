@@ -7,7 +7,7 @@
 
 </div>
 
-**Version 0.0.5_STABLE** · Auteur : [PiBOH](https://piboh.github.io/)
+**Version 0.0.6_STABLE** · Auteur : [PiBOH](https://piboh.github.io/)
 
 > 🔤 Un lecteur de fichiers Markdown multiplateforme. Aucune installation requise — téléchargez et lancez.
 
@@ -20,6 +20,7 @@
 * 📖 **Lire des fichiers Markdown** avec un rendu élégant de style GitHub
 * 🎨 **Coloration syntaxique** pour les blocs de code (100+ langages)
 * 🌐 **6 langues prises en charge** : 🇮🇹 Italiano, 🇬🇧 English (UK), 🇺🇸 English (US), 🇪🇸 Español, 🇩🇪 Deutsch, 🇫🇷 Français
+  *(note : les traductions autres que l'italien peuvent ne pas être exactes à 100 %)*
 * 🌙 **Mode sombre / clair** avec détection des préférences système
 * 📂 **Barre latérale des fichiers récents** avec historique persistant
 * 🖱️ **Glisser-déposer** pour ouvrir des fichiers
@@ -136,4 +137,4 @@ MIT © [PiBOH](https://piboh.github.io/)
 
 **Dépôt** : [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Auteur** : [PiBOH](https://piboh.github.io/)  
-**Version** : 0.0.5_STABLE
+**Version** : 0.0.6_STABLE

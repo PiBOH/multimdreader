@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.0.6_STABLE] — 2025-06-23
+
+### ✨ New Features
+
+- **Added 32-bit (x86) release workflows** for Windows and Linux:
+  - `release-windows-x86.yml` — builds `i686-pc-windows-msvc` target (installer + portable `.exe`)
+  - `release-linux-x86.yml` — builds `i686-unknown-linux-gnu` target (`.deb`, `.AppImage`, Arch `.pkg.tar.zst`)
+- **Added `release-macos-x86.yml`** — placeholder workflow documenting that macOS 32-bit is not available (Apple dropped 32-bit application support in macOS 10.15 Catalina, 2019; no Rust `i686` target exists for Darwin)
+
+### 📝 Documentation
+
+- Updated all version references to `0.0.6_STABLE`
+- Dashboard changelog updated with new release entry
+- Added translation accuracy notice to all READMEs and dashboard: translations other than Italian may not be 100% accurate
+
+---
+
 ## [0.0.5_STABLE] — 2025-06-23
 
 ### ✨ New Features
@@ -153,6 +170,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.0.6_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.6_STABLE
 [0.0.5_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.5_STABLE
 [0.0.4_BETA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.4_BETA
 [0.0.3_ALPHA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.3_ALPHA

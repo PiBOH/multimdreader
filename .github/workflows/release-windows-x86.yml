@@ -1,0 +1,80 @@
+name: Release Windows (x86)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows-x86:
+    name: Build Windows 32-bit
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: i686-pc-windows-msvc
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Generate Tauri icons
+        run: npx tauri icon public/icon.png
+        continue-on-error: true
+
+      - name: Install Tauri Rust dependencies
+        working-directory: src-tauri
+        run: cargo fetch
+
+      - name: Build Tauri app (Windows x86)
+        run: npx tauri build --target i686-pc-windows-msvc 2>&1
+        timeout-minutes: 30
+
+      - name: List build output
+        run: |
+          Get-ChildItem -Path "src-tauri\target\i686-pc-windows-msvc\release\bundle" -Recurse -File | Select-Object FullName
+          Get-ChildItem -Path "src-tauri\target\i686-pc-windows-msvc\release" -Filter "multimdreader.exe" | Select-Object FullName
+        continue-on-error: true
+
+      - name: Upload Windows x86 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: multimdreader-windows-x86
+          path: |
+            src-tauri/target/i686-pc-windows-msvc/release/multimdreader.exe
+            src-tauri/target/i686-pc-windows-msvc/release/bundle/nsis/*.exe
+          retention-days: 30
+
+      - name: Create/Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: 'MultiMDReader ${{ github.ref_name }}'
+          body: 'See release assets below.'
+          draft: false
+          prerelease: false
+          files: |
+            src-tauri/target/i686-pc-windows-msvc/release/multimdreader.exe
+            src-tauri/target/i686-pc-windows-msvc/release/bundle/nsis/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

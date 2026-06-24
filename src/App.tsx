@@ -6,7 +6,7 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.0.5_STABLE';
+const APP_VERSION = '0.0.6_STABLE';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
