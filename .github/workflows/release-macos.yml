@@ -1,4 +1,4 @@
-name: release-macos.tml
+name: release-macos.yml
 
 on:
   push:
