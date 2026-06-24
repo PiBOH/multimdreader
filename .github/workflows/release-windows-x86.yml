@@ -1,4 +1,4 @@
-name: Release Windows (x86)
+name: release-windows-x86.yml
 
 on:
   push:

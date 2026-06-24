@@ -1,4 +1,4 @@
-name: Release Windows
+name: release-windows.yml
 
 on:
   push:

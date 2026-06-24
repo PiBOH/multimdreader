@@ -1,4 +1,4 @@
-name: Release Linux (x86)
+name: release-linux-x86.yml
 
 on:
   push:

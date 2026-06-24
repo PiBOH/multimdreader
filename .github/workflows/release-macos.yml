@@ -1,4 +1,4 @@
-name: Release macOS
+name: release-macos.tml
 
 on:
   push:
