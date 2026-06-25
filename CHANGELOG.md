@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Added 32-bit (x86) release workflows** for Windows and Linux:
   - `release-windows-x86.yml` — builds `i686-pc-windows-msvc` target (installer + portable `.exe`)
   - `release-linux-x86.yml` — builds `i686-unknown-linux-gnu` target (`.deb`, `.AppImage`, Arch `.pkg.tar.zst`)
-- **Added `release-macos-x86.yml`** — placeholder workflow documenting that macOS 32-bit is not available (Apple dropped 32-bit application support in macOS 10.15 Catalina, 2019; no Rust `i686` target exists for Darwin)
 
 ### 📝 Documentation
 
