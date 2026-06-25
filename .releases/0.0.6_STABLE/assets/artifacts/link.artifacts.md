@@ -1,0 +1,22 @@
+# Workflow multi-Platform build links.
+
+### release-linux.yml #6
+debian & appimage	https://github.com/PiBOH/multimdreader/actions/runs/28193137530/job/83512741938
+
+Arch			https://github.com/PiBOH/multimdreader/actions/runs/28193137530/job/83513643287
+
+### release-linux-x86.yml #4
+debian (x86)		https://github.com/PiBOH/multimdreader/actions/runs/28194459983/job/83517367391
+
+Arch (x86)		https://github.com/PiBOH/multimdreader/actions/runs/28194459983/job/83518024987
+
+### release-macos.yml #6
+macOS (x64)		https://github.com/PiBOH/multimdreader/actions/runs/28193209916/job/83512982531
+
+macOS (aarch64)		https://github.com/PiBOH/multimdreader/actions/runs/28193209916/job/83512982569
+
+### release-windows.yml #6
+setup & portable	https://github.com/PiBOH/multimdreader/actions/runs/28193221558/job/83513023967
+
+### release-windows-x86.yml #2
+setup & portable	https://github.com/PiBOH/multimdreader/actions/runs/28193225160/job/83513035016
