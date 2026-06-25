@@ -52,17 +52,40 @@ jobs:
 
       - name: List build output
         run: |
-          Get-ChildItem -Path "src-tauri\target\i686-pc-windows-msvc\release\bundle" -Recurse -File | Select-Object FullName
-          Get-ChildItem -Path "src-tauri\target\i686-pc-windows-msvc\release" -Filter "multimdreader.exe" | Select-Object FullName
+          Get-ChildItem -Path "src-tauri\target\i686-pc-windows-msvc\release\bundle" -Recurse -File -ErrorAction SilentlyContinue | Select-Object FullName
+          Get-ChildItem -Path "src-tauri\target\i686-pc-windows-msvc\release" -Filter "multimdreader.exe" -ErrorAction SilentlyContinue | Select-Object FullName
         continue-on-error: true
+
+      - name: Rename artifacts (portable + setup)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = ${env:GITHUB_REF_NAME}
+          $ver = $tag -replace '^v',''
+          if (-not ($ver -match '^\d+\.\d+\.\d+')) { $ver = '0.0.6' }
+          $arch = 'x86'
+          $releaseDir = 'release'
+          New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
+          $targetDir = 'src-tauri\target\i686-pc-windows-msvc\release'
+          # Portable
+          Copy-Item "$targetDir\multimdreader.exe" "$releaseDir\multimdreader_${ver}_${arch}-portable-win.exe"
+          # Setup (NSIS)
+          $setup = Get-ChildItem -Path "$targetDir\bundle\nsis" -Filter *.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($setup) {
+            Copy-Item $setup.FullName "$releaseDir\MultiMDReader_${ver}_${arch}-setup-win.exe"
+          } else {
+            Write-Warning "No NSIS setup found."
+          }
+          Get-ChildItem $releaseDir | Select-Object Name
 
       - name: Upload Windows x86 artifacts
         uses: actions/upload-artifact@v4
         with:
           name: multimdreader-windows-x86
+          if-no-files-found: error
           path: |
-            src-tauri/target/i686-pc-windows-msvc/release/multimdreader.exe
-            src-tauri/target/i686-pc-windows-msvc/release/bundle/nsis/*.exe
+            release/multimdreader_*-portable-win.exe
+            release/MultiMDReader_*-setup-win.exe
           retention-days: 30
 
       - name: Create/Update GitHub Release
@@ -74,7 +97,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            src-tauri/target/i686-pc-windows-msvc/release/multimdreader.exe
-            src-tauri/target/i686-pc-windows-msvc/release/bundle/nsis/*.exe
+            release/multimdreader_*-portable-win.exe
+            release/MultiMDReader_*-setup-win.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

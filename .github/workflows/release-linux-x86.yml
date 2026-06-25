@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-linux-x86:
-    name: Build Linux 32-bit (Debian + AppImage)
+    name: Build Linux 32-bit (Debian)
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
@@ -32,18 +32,25 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-      - name: Install system dependencies (32-bit)
+      - name: Enable i386 architecture & install multilib toolchain
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y \
-            libwebkit2gtk-4.1-dev:i386 \
-            libappindicator3-dev:i386 \
-            librsvg2-dev:i386 \
+          sudo apt-get install -y --allow-downgrades \
+            build-essential \
             patchelf \
-            libssl-dev:i386 \
             gcc-multilib \
             g++-multilib
+
+      - name: Install 32-bit (i386) Tauri dependencies
+        # libappindicator3-dev / libayatana-appindicator3-dev NON esistono per i386
+        # (ayatana e' 64-bit only) e NON servono: MultiMDReader non ha system tray.
+        run: |
+          sudo apt-get install -y --allow-downgrades \
+            libwebkit2gtk-4.1-dev:i386 \
+            libgtk-3-dev:i386 \
+            librsvg2-dev:i386 \
+            libssl-dev:i386
 
       - name: Install frontend dependencies
         run: npm install
@@ -59,8 +66,13 @@ jobs:
         working-directory: src-tauri
         run: cargo fetch
 
-      - name: Build Tauri app (Linux x86)
-        run: npx tauri build --target i686-unknown-linux-gnu 2>&1
+      - name: Build Tauri app — Debian package (32-bit)
+        # Solo .deb: l'AppImage i686 non e' supportata (linuxdeploy non ha build i686)
+        env:
+          PKG_CONFIG_ALLOW_CROSS: "1"
+          PKG_CONFIG_LIBDIR: "/usr/lib/i386-linux-gnu/pkgconfig:/usr/local/share/pkgconfig:/usr/share/pkgconfig"
+          PKG_CONFIG_SYSROOT_DIR: "/"
+        run: npx tauri build --target i686-unknown-linux-gnu --bundles deb
         timeout-minutes: 30
 
       - name: List build output
@@ -71,9 +83,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: multimdreader-linux-x86-artifacts
+          if-no-files-found: error
           path: |
             src-tauri/target/i686-unknown-linux-gnu/release/bundle/deb/*.deb
-            src-tauri/target/i686-unknown-linux-gnu/release/bundle/appimage/*.AppImage
           retention-days: 30
 
       - name: Create/Update GitHub Release
@@ -86,7 +98,6 @@ jobs:
           prerelease: false
           files: |
             src-tauri/target/i686-unknown-linux-gnu/release/bundle/deb/*.deb
-            src-tauri/target/i686-unknown-linux-gnu/release/bundle/appimage/*.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -107,59 +118,66 @@ jobs:
           image: archlinux:latest
           options: -v ${{ github.workspace }}/artifacts:/artifacts
           run: |
+            set -e
             pacman -Syu --noconfirm
-            pacman -S --noconfirm base-devel binutils fakeroot sudo
+            pacman -S --noconfirm base-devel binutils fakeroot sudo dpkg
 
             mkdir -p /tmp/multimdreader-pkg/src
 
-            APPIMAGE=$(find /artifacts/ -name "*.AppImage" | head -1)
-            if [ -n "$APPIMAGE" ]; then
-              cp "$APPIMAGE" /tmp/multimdreader-pkg/src/MultiMDReader.AppImage
-              chmod +x /tmp/multimdreader-pkg/src/MultiMDReader.AppImage
-            else
-              echo "ERROR: No AppImage found"
-              exit 1
-            fi
+            # Estrai il binario a 32-bit dal .deb (non esiste AppImage i686)
+            DEB=$(find /artifacts/ -name "*.deb" | head -1)
+            if [ -z "$DEB" ]; then echo "ERROR: No .deb found"; exit 1; fi
+            dpkg-deb -x "$DEB" /tmp/extract
+            BIN=$(find /tmp/extract -type f -path "*/bin/*" | head -1)
+            if [ -z "$BIN" ]; then BIN=$(find /tmp/extract -type f -perm -111 ! -name "*.so*" | head -1); fi
+            if [ -z "$BIN" ]; then echo "ERROR: No executable found inside .deb"; exit 1; fi
+            cp "$BIN" /tmp/multimdreader-pkg/src/MultiMDReader
+            chmod +x /tmp/multimdreader-pkg/src/MultiMDReader
+
+            # File .desktop
+            cat > /tmp/multimdreader-pkg/src/multimdreader.desktop << 'DESKTOPEOF'
+[Desktop Entry]
+Name=MultiMDReader
+Comment=Cross-Platform Markdown Reader
+Exec=multimdreader %F
+Icon=multimdreader
+Terminal=false
+Type=Application
+Categories=Office;TextEditor;Viewer;
+MimeType=text/markdown;text/x-markdown;
+DESKTOPEOF
 
             TAG="${{ github.ref_name }}"
             VERSION="${TAG#v}"
             [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.0.6"
 
-            cat > /tmp/multimdreader-pkg/PKGBUILD << PKGBUILDEOF
-            pkgname=multimdreader-bin
-            pkgver=$VERSION
-            pkgrel=1
-            pkgdesc="A cross-platform Markdown file reader — AppImage binary (i386)"
-            arch=('i686')
-            url="https://github.com/PiBOH/multimdreader"
-            license=('MIT')
-            depends=('webkit2gtk-4.1' 'gtk3')
-            provides=('multimdreader')
-            conflicts=('multimdreader')
-            source=("MultiMDReader.AppImage")
-            sha256sums=('SKIP')
+            cat > /tmp/multimdreader-pkg/PKGBUILD << 'PKGBUILDEOF'
+pkgname=multimdreader-bin
+pkgver=PLACEHOLDER
+pkgrel=1
+pkgdesc="A cross-platform Markdown file reader — 32-bit binary (i386)"
+arch=('i686')
+url="https://github.com/PiBOH/multimdreader"
+license=('MIT')
+depends=('webkit2gtk-4.1' 'gtk3')
+provides=('multimdreader')
+conflicts=('multimdreader')
+source=("MultiMDReader" "multimdreader.desktop")
+sha256sums=('SKIP' 'SKIP')
 
-            package() {
-                install -Dm755 "\$srcdir/MultiMDReader.AppImage" "\$pkgdir/usr/bin/multimdreader"
-                install -Dm644 /dev/stdin "\$pkgdir/usr/share/applications/multimdreader.desktop" << DESKTOP
-            [Desktop Entry]
-            Name=MultiMDReader
-            Comment=Cross-Platform Markdown Reader
-            Exec=multimdreader %F
-            Icon=multimdreader
-            Terminal=false
-            Type=Application
-            Categories=Office;TextEditor;Viewer;
-            MimeType=text/markdown;text/x-markdown;
-            DESKTOP
-            }
-            PKGBUILDEOF
+package() {
+    install -Dm755 "$srcdir/MultiMDReader" "$pkgdir/usr/bin/multimdreader"
+    install -Dm644 "$srcdir/multimdreader.desktop" "$pkgdir/usr/share/applications/multimdreader.desktop"
+}
+PKGBUILDEOF
+
+            sed -i "s/pkgver=PLACEHOLDER/pkgver=$VERSION/" /tmp/multimdreader-pkg/PKGBUILD
 
             cd /tmp/multimdreader-pkg
             useradd -m builduser
             echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
             chown -R builduser:builduser /tmp/multimdreader-pkg
-            su - builduser -c "cd /tmp/multimdreader-pkg && makepkg -sf --noconfirm"
+            su - builduser -c "cd /tmp/multimdreader-pkg && makepkg -sf --noconfirm --ignorearch"
             find /tmp/multimdreader-pkg -name "*.pkg.tar.zst" -exec cp {} /artifacts/ \;
 
       - name: Upload Arch x86 package
