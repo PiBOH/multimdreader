@@ -121,7 +121,8 @@ jobs:
             set -e
             pacman -Syu --noconfirm
             pacman -S --noconfirm base-devel binutils fakeroot sudo dpkg
-            mkdir -p /tmp/multimdreader-pkg/src
+
+            mkdir -p /tmp/multimdreader-pkg
             # Estrai il binario a 32-bit dal .deb (non esiste AppImage i686)
             DEB=$(find /artifacts/ -name "*.deb" | head -1)
             if [ -z "$DEB" ]; then echo "ERROR: No .deb found"; exit 1; fi
@@ -129,10 +130,12 @@ jobs:
             BIN=$(find /tmp/extract -type f -path "*/bin/*" | head -1)
             if [ -z "$BIN" ]; then BIN=$(find /tmp/extract -type f -perm -111 ! -name "*.so*" | head -1); fi
             if [ -z "$BIN" ]; then echo "ERROR: No executable found inside .deb"; exit 1; fi
-            cp "$BIN" /tmp/multimdreader-pkg/src/MultiMDReader
-            chmod +x /tmp/multimdreader-pkg/src/MultiMDReader
-            # File .desktop (attenzione: tutto indentato a 12 spazi, anche il terminatore)
-            cat > /tmp/multimdreader-pkg/src/multimdreader.desktop << 'DESKTOPEOF'
+            # Le sorgenti vanno nello STESSO folder del PKGBUILD (startdir/SRCDEST),
+            # NON in src/ : makepkg le cerca qui e poi le copia da solo in srcdir.
+            cp "$BIN" /tmp/multimdreader-pkg/MultiMDReader
+            chmod +x /tmp/multimdreader-pkg/MultiMDReader
+
+            cat > /tmp/multimdreader-pkg/multimdreader.desktop << 'DESKTOPEOF'
             [Desktop Entry]
             Name=MultiMDReader
             Comment=Cross-Platform Markdown Reader
@@ -143,9 +146,11 @@ jobs:
             Categories=Office;TextEditor;Viewer;
             MimeType=text/markdown;text/x-markdown;
             DESKTOPEOF
+
             TAG="${{ github.ref_name }}"
             VERSION="${TAG#v}"
             [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.0.6"
+
             cat > /tmp/multimdreader-pkg/PKGBUILD << 'PKGBUILDEOF'
             pkgname=multimdreader-bin
             pkgver=PLACEHOLDER
@@ -159,17 +164,22 @@ jobs:
             conflicts=('multimdreader')
             source=("MultiMDReader" "multimdreader.desktop")
             sha256sums=('SKIP' 'SKIP')
+
             package() {
                 install -Dm755 "$srcdir/MultiMDReader" "$pkgdir/usr/bin/multimdreader"
                 install -Dm644 "$srcdir/multimdreader.desktop" "$pkgdir/usr/share/applications/multimdreader.desktop"
             }
             PKGBUILDEOF
+
             sed -i "s/pkgver=PLACEHOLDER/pkgver=$VERSION/" /tmp/multimdreader-pkg/PKGBUILD
+
             cd /tmp/multimdreader-pkg
             useradd -m builduser
             echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
             chown -R builduser:builduser /tmp/multimdreader-pkg
-            su - builduser -c "cd /tmp/multimdreader-pkg && makepkg -sf --noconfirm --ignorearch"
+            # -d (nodeps): salta controlli/scarico dipendenze (no download ~700MB).
+            # Le dipendenze restano comunque nei metadati del pacchetto finale.
+            su - builduser -c "cd /tmp/multimdreader-pkg && makepkg -d --noconfirm --ignorearch"
             find /tmp/multimdreader-pkg -name "*.pkg.tar.zst" -exec cp {} /artifacts/ \;
 
       - name: Upload Arch x86 package
