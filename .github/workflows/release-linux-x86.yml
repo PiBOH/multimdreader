@@ -121,9 +121,7 @@ jobs:
             set -e
             pacman -Syu --noconfirm
             pacman -S --noconfirm base-devel binutils fakeroot sudo dpkg
-
             mkdir -p /tmp/multimdreader-pkg/src
-
             # Estrai il binario a 32-bit dal .deb (non esiste AppImage i686)
             DEB=$(find /artifacts/ -name "*.deb" | head -1)
             if [ -z "$DEB" ]; then echo "ERROR: No .deb found"; exit 1; fi
@@ -133,46 +131,40 @@ jobs:
             if [ -z "$BIN" ]; then echo "ERROR: No executable found inside .deb"; exit 1; fi
             cp "$BIN" /tmp/multimdreader-pkg/src/MultiMDReader
             chmod +x /tmp/multimdreader-pkg/src/MultiMDReader
-
-            # File .desktop
+            # File .desktop (attenzione: tutto indentato a 12 spazi, anche il terminatore)
             cat > /tmp/multimdreader-pkg/src/multimdreader.desktop << 'DESKTOPEOF'
-[Desktop Entry]
-Name=MultiMDReader
-Comment=Cross-Platform Markdown Reader
-Exec=multimdreader %F
-Icon=multimdreader
-Terminal=false
-Type=Application
-Categories=Office;TextEditor;Viewer;
-MimeType=text/markdown;text/x-markdown;
-DESKTOPEOF
-
+            [Desktop Entry]
+            Name=MultiMDReader
+            Comment=Cross-Platform Markdown Reader
+            Exec=multimdreader %F
+            Icon=multimdreader
+            Terminal=false
+            Type=Application
+            Categories=Office;TextEditor;Viewer;
+            MimeType=text/markdown;text/x-markdown;
+            DESKTOPEOF
             TAG="${{ github.ref_name }}"
             VERSION="${TAG#v}"
             [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.0.6"
-
             cat > /tmp/multimdreader-pkg/PKGBUILD << 'PKGBUILDEOF'
-pkgname=multimdreader-bin
-pkgver=PLACEHOLDER
-pkgrel=1
-pkgdesc="A cross-platform Markdown file reader — 32-bit binary (i386)"
-arch=('i686')
-url="https://github.com/PiBOH/multimdreader"
-license=('MIT')
-depends=('webkit2gtk-4.1' 'gtk3')
-provides=('multimdreader')
-conflicts=('multimdreader')
-source=("MultiMDReader" "multimdreader.desktop")
-sha256sums=('SKIP' 'SKIP')
-
-package() {
-    install -Dm755 "$srcdir/MultiMDReader" "$pkgdir/usr/bin/multimdreader"
-    install -Dm644 "$srcdir/multimdreader.desktop" "$pkgdir/usr/share/applications/multimdreader.desktop"
-}
-PKGBUILDEOF
-
+            pkgname=multimdreader-bin
+            pkgver=PLACEHOLDER
+            pkgrel=1
+            pkgdesc="A cross-platform Markdown file reader — 32-bit binary (i386)"
+            arch=('i686')
+            url="https://github.com/PiBOH/multimdreader"
+            license=('MIT')
+            depends=('webkit2gtk-4.1' 'gtk3')
+            provides=('multimdreader')
+            conflicts=('multimdreader')
+            source=("MultiMDReader" "multimdreader.desktop")
+            sha256sums=('SKIP' 'SKIP')
+            package() {
+                install -Dm755 "$srcdir/MultiMDReader" "$pkgdir/usr/bin/multimdreader"
+                install -Dm644 "$srcdir/multimdreader.desktop" "$pkgdir/usr/share/applications/multimdreader.desktop"
+            }
+            PKGBUILDEOF
             sed -i "s/pkgver=PLACEHOLDER/pkgver=$VERSION/" /tmp/multimdreader-pkg/PKGBUILD
-
             cd /tmp/multimdreader-pkg
             useradd -m builduser
             echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
