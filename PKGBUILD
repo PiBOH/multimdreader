@@ -1,7 +1,7 @@
 # Maintainer: PiBOH
 # This PKGBUILD builds MultiMDReader from source for Arch Linux
 pkgname=multimdreader
-pkgver=0.0.6
+pkgver=0.0.7
 pkgrel=1
 pkgdesc="A cross-platform Markdown file reader - no installation required"
 arch=('x86_64')
@@ -29,11 +29,11 @@ package() {
 [Desktop Entry]
 Name=MultiMDReader
 Comment=Cross-Platform Markdown Reader
-Exec=multimdreader
+Exec=multimdreader %f
 Icon=multimdreader
 Terminal=false
 Type=Application
 Categories=Office;TextEditor;Viewer;
-MimeType=text/markdown;text/x-markdown;
+MimeType=text/markdown;text/x-markdown;text/plain;
 EOF
 }

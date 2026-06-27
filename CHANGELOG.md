@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.0.7_STABLE] — 2026-06-27
+
+### ✨ New Features & Bug Fixes
+
+- **Fixed file association opening**: When installing the program and associating supported extensions (`.md`, `.txt`, etc.), double-clicking a file in the operating system now correctly loads and displays the file contents within the application instead of just opening the welcome screen.
+- **Fixed native Drag & Drop**: Dragging and dropping files from the OS file explorer into the desktop application now correctly opens the dropped files.
+- **Desktop File Associations**: Configured native bundle file associations in `tauri.conf.json` and added `%f` parameter to Linux desktop entry in `PKGBUILD`.
+
+### 📝 Documentation
+
+- Updated all version references to `0.0.7_STABLE`
+- Created `arenaai.md` with comprehensive developer guidelines and architectural documentation.
+
+---
+
 ## [0.0.6_STABLE] — 2025-06-23
 
 ### ✨ New Features
@@ -169,6 +184,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.0.7_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.7_STABLE
 [0.0.6_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.6_STABLE
 [0.0.5_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.5_STABLE
 [0.0.4_BETA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.4_BETA

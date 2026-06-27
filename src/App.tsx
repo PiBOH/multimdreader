@@ -4,9 +4,12 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
+import { invoke } from '@tauri-apps/api/core';
+import { getCurrentWebview } from '@tauri-apps/api/webview';
+import { listen } from '@tauri-apps/api/event';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.0.6_STABLE';
+const APP_VERSION = '0.0.7_STABLE';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
@@ -140,7 +143,7 @@ function IconClose() {
 function IconCopy() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 112-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
     </svg>
   );
 }
@@ -297,6 +300,93 @@ export default function App() {
     document.addEventListener('keydown', handleKeyboard);
     return () => document.removeEventListener('keydown', handleKeyboard);
   }, []);
+
+  // Open file via Tauri backend (CLI args, macOS events, Tauri drag & drop)
+  const openTauriPath = useCallback(async (path: string) => {
+    if (!isSupportedFile(path)) {
+      setFileReadError(t('errors.unsupportedFile'));
+      setTimeout(() => setFileReadError(null), 3000);
+      return;
+    }
+    setFileReadError(null);
+    try {
+      const data = await invoke<{ name: string; content: string; size: number; modified: number }>('read_file_data', { path });
+      setCurrentContent(data.content);
+      setCurrentFileName(data.name);
+      setCurrentFileSize(data.size);
+      setCurrentFileModified(data.modified);
+      setRecentFiles(prev => {
+        const filtered = prev.filter(f => f.name !== data.name);
+        const storedContent = data.content.length > MAX_RECENT_CONTENT_SIZE
+          ? data.content.slice(0, MAX_RECENT_CONTENT_SIZE) + '\n\n... [content truncated for storage]'
+          : data.content;
+        return [{ name: data.name, content: storedContent, lastOpened: Date.now(), size: data.size }, ...filtered].slice(0, MAX_RECENT_FILES);
+      });
+    } catch (err) {
+      console.error(err);
+      setFileReadError(t('errors.fileReadError'));
+      setTimeout(() => setFileReadError(null), 3000);
+    }
+  }, [t]);
+
+  // Tauri Setup Hook
+  useEffect(() => {
+    let unlistenDragDrop: (() => void) | undefined;
+    let unlistenOpened: (() => void) | undefined;
+
+    async function setupTauri() {
+      try {
+        if (!('__TAURI_INTERNALS__' in window)) return;
+
+        // 1. Check for files passed via CLI args or macOS startup
+        const openedFiles = await invoke<string[]>('get_opened_files');
+        if (openedFiles && openedFiles.length > 0) {
+          const targetPath = openedFiles.find(p => isSupportedFile(p)) || openedFiles[0];
+          if (targetPath) {
+            openTauriPath(targetPath);
+          }
+        }
+
+        // 2. Listen for runtime opened files (macOS open event)
+        unlistenOpened = await listen<string[]>('opened-files', (event) => {
+          const paths = event.payload;
+          if (paths && paths.length > 0) {
+            const targetPath = paths.find(p => isSupportedFile(p)) || paths[0];
+            if (targetPath) {
+              openTauriPath(targetPath);
+            }
+          }
+        });
+
+        // 3. Listen for Tauri Drag & Drop events
+        unlistenDragDrop = await getCurrentWebview().onDragDropEvent((event) => {
+          if (event.payload.type === 'over') {
+            setIsDragging(true);
+          } else if (event.payload.type === 'drop') {
+            setIsDragging(false);
+            const paths = event.payload.paths;
+            if (paths && paths.length > 0) {
+              const targetPath = paths.find(p => isSupportedFile(p)) || paths[0];
+              if (targetPath) {
+                openTauriPath(targetPath);
+              }
+            }
+          } else {
+            setIsDragging(false);
+          }
+        });
+      } catch (err) {
+        console.error('Tauri setup error:', err);
+      }
+    }
+
+    setupTauri();
+
+    return () => {
+      if (unlistenDragDrop) unlistenDragDrop();
+      if (unlistenOpened) unlistenOpened();
+    };
+  }, [openTauriPath]);
 
   const openFile = useCallback((file: File) => {
     if (!isSupportedFile(file.name)) {

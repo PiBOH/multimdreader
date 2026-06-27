@@ -7,7 +7,7 @@
 
 </div>
 
-**Version 0.0.6_STABLE** · Author: [PiBOH](https://piboh.github.io/)
+**Version 0.0.7_STABLE** · Author: [PiBOH](https://piboh.github.io/)
 
 > 🔤 A cross-platform Markdown file reader. No installation required — just download and run.
 
@@ -137,4 +137,4 @@ MIT © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Author**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.0.6_STABLE
+**Version**: 0.0.7_STABLE

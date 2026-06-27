@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Cross-Platform Markdown Reader",
-    "version": "0.0.6_STABLE"
+    "version": "0.0.7_STABLE"
   },
   "header": {
     "openFile": "Open File",
