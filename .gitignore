@@ -22,6 +22,9 @@ package-lock.json
 # Project folders
 .logo-images/
 .old-releases/
+.releases/.ignore
+.releases/.ignore/
+.releases/.ignore/*
 
 # OS
 .DS_Store
