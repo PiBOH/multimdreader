@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.0.8_BETA] — 2026-06-29
+
+### 🚀 Windows 7 & Legacy OS Compatibility
+
+- **Windows 7 Support**: Configured `webviewInstallMode` to `embedBootstrapper` in `tauri.conf.json`. This embeds the WebView2 bootstrapper directly within the NSIS installer, ensuring seamless installation on Windows 7 machines where TLS 1.2 or dynamic bootstrapper downloads might fail.
+- **Windows 7 Cargo Compatibility**: Added the `windows7-compat` feature to the Tauri dependency in `Cargo.toml` to guarantee compatibility with legacy Windows API subsystems.
+- **Windows XP Statement**: Note that Windows XP cannot be supported by Tauri v2 / WebView2. WebView2 is built on Microsoft Edge / Chromium, which permanently dropped support for Windows XP in 2016 (Chrome 49). Additionally, modern Rust toolchains require Windows 7 as the absolute minimum baseline.
+
+### 📝 Documentation
+
+- Updated all version references to `0.0.8_BETA`
+- Updated `arenaai.md` with explicit details on Windows 7 compatibility configurations and legacy OS limitations.
+
+---
+
 ## [0.0.7_STABLE] — 2026-06-27
 
 ### ✨ New Features & Bug Fixes
@@ -184,6 +199,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.0.8_BETA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA
 [0.0.7_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.7_STABLE
 [0.0.6_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.6_STABLE
 [0.0.5_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.5_STABLE

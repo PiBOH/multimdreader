@@ -15,7 +15,7 @@
       <div class="hero-logo">M</div>
       <h1>MultiMDReader</h1>
       <p class="hero-tagline">🔤 A cross-platform Markdown file reader.<br/>No installation required — just download and run.</p>
-      <p class="hero-version">v<span id="version-display">0.0.7_STABLE</span></p>
+      <p class="hero-version">v<span id="version-display">0.0.8_BETA</span></p>
       <div class="hero-buttons">
         <a href="#download" class="btn btn-primary">⬇ Download</a>
         <a href="https://github.com/PiBOH/multimdreader" target="_blank" rel="noopener" class="btn btn-secondary">📂 Repository</a>
@@ -140,7 +140,7 @@
   <div id="download" class="section">
     <h2><span>▶</span> Download</h2>
     <p>
-      Current version: <strong><span id="dl-version">0.0.7_STABLE</span></strong>
+      Current version: <strong><span id="dl-version">0.0.8_BETA</span></strong>
       · All links point to the latest release on GitHub.
     </p>
 
@@ -193,6 +193,13 @@
     <p>Fetched live from the repository — always up to date.</p>
     <div id="changelog-content">
       <article>
+        <h3>[0.0.8_BETA]</h3>
+        <ul>
+          <li>Windows 7 compatibility support: set <code>webviewInstallMode</code> to <code>embedBootstrapper</code> in <code>tauri.conf.json</code></li>
+          <li>Added <code>windows7-compat</code> Cargo feature flag in <code>Cargo.toml</code></li>
+          <li>Clarified Windows XP legacy engine limitations (Chromium/WebView2 minimum requirement is Windows 7)</li>
+          <li>Updated all version references to <code>0.0.8_BETA</code></li>
+        </ul>
         <h3>[0.0.7_STABLE]</h3>
         <ul>
           <li>Fixed file association opening: double-clicking an associated file in the OS now correctly opens and loads the file contents in the app</li>
@@ -341,7 +348,7 @@ Build:
         <span>MultiMDReader</span>
       </div>
       <p>Author: <a href="https://piboh.github.io/" target="_blank" rel="noopener">PiBOH</a> · Repository: <a href="https://github.com/PiBOH/multimdreader" target="_blank" rel="noopener">GitHub</a> · License: MIT</p>
-      <p class="footer-version">v0.0.7_STABLE</p>
+      <p class="footer-version">v0.0.8_BETA</p>
     </div>
   </footer>
 
