@@ -149,7 +149,7 @@ jobs:
 
             TAG="${{ github.ref_name }}"
             VERSION="${TAG#v}"
-            [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.0.7"
+            [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.0.8"
 
             cat > /tmp/multimdreader-pkg/PKGBUILD << 'PKGBUILDEOF'
             pkgname=multimdreader-bin
@@ -158,7 +158,7 @@ jobs:
             pkgdesc="A cross-platform Markdown file reader — 32-bit binary (i386)"
             arch=('i686')
             url="https://github.com/PiBOH/multimdreader"
-            license=('MIT')
+            license=('AGPL3')
             depends=('webkit2gtk-4.1' 'gtk3')
             provides=('multimdreader')
             conflicts=('multimdreader')

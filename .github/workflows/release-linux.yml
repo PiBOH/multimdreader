@@ -97,40 +97,43 @@ jobs:
           image: archlinux:latest
           options: -v ${{ github.workspace }}/artifacts:/artifacts
           run: |
+            set -e
             pacman -Syu --noconfirm
-            pacman -S --noconfirm base-devel binutils fakeroot sudo
+            pacman -S --noconfirm base-devel binutils fakeroot sudo dpkg
 
-            mkdir -p /tmp/multimdreader-pkg/src
-
-            APPIMAGE=$(find /artifacts/ -name "*.AppImage" | head -1)
-            if [ -n "$APPIMAGE" ]; then
-              cp "$APPIMAGE" /tmp/multimdreader-pkg/src/MultiMDReader.AppImage
-              chmod +x /tmp/multimdreader-pkg/src/MultiMDReader.AppImage
-            else
-              echo "ERROR: No AppImage found"
-              exit 1
-            fi
+            mkdir -p /tmp/multimdreader-pkg
+            
+            # Estrai il binario puro ELF a 64-bit dal .deb per creare un pacchetto Arch nativo al 100%
+            DEB=$(find /artifacts/ -name "*.deb" | head -1)
+            if [ -z "$DEB" ]; then echo "ERROR: No .deb found"; exit 1; fi
+            dpkg-deb -x "$DEB" /tmp/extract
+            BIN=$(find /tmp/extract -type f -path "*/bin/*" | head -1)
+            if [ -z "$BIN" ]; then BIN=$(find /tmp/extract -type f -perm -111 ! -name "*.so*" | head -1); fi
+            if [ -z "$BIN" ]; then echo "ERROR: No executable found inside .deb"; exit 1; fi
+            
+            cp "$BIN" /tmp/multimdreader-pkg/MultiMDReader
+            chmod +x /tmp/multimdreader-pkg/MultiMDReader
 
             TAG="${{ github.ref_name }}"
             VERSION="${TAG#v}"
-            [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.0.7"
+            [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.0.8"
 
             cat > /tmp/multimdreader-pkg/PKGBUILD << PKGBUILDEOF
             pkgname=multimdreader-bin
             pkgver=$VERSION
             pkgrel=1
-            pkgdesc="A cross-platform Markdown file reader — AppImage binary"
+            pkgdesc="A cross-platform Markdown file reader — Native 64-bit binary"
             arch=('x86_64')
             url="https://github.com/PiBOH/multimdreader"
-            license=('MIT')
+            license=('AGPL3')
             depends=('webkit2gtk-4.1' 'gtk3')
             provides=('multimdreader')
             conflicts=('multimdreader')
-            source=("MultiMDReader.AppImage")
+            source=("MultiMDReader")
             sha256sums=('SKIP')
 
             package() {
-                install -Dm755 "\$srcdir/MultiMDReader.AppImage" "\$pkgdir/usr/bin/multimdreader"
+                install -Dm755 "\$srcdir/MultiMDReader" "\$pkgdir/usr/bin/multimdreader"
                 install -Dm644 /dev/stdin "\$pkgdir/usr/share/applications/multimdreader.desktop" << DESKTOP
             [Desktop Entry]
             Name=MultiMDReader
@@ -149,7 +152,7 @@ jobs:
             useradd -m builduser
             echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
             chown -R builduser:builduser /tmp/multimdreader-pkg
-            su - builduser -c "cd /tmp/multimdreader-pkg && makepkg -sf --noconfirm"
+            su - builduser -c "cd /tmp/multimdreader-pkg && makepkg -sd --noconfirm"
             find /tmp/multimdreader-pkg -name "*.pkg.tar.zst" -exec cp {} /artifacts/ \;
 
       - name: Upload Arch package
