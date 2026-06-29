@@ -131,7 +131,7 @@ Se ejecuta en cada push a `main` — despliega dashboard y demo en GitHub Pages:
 
 ## 📝 Licencia
 
-MIT © [PiBOH](https://piboh.github.io/)
+AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 ---
 

@@ -131,7 +131,7 @@ S'exécute à chaque push sur `main` — déploie le tableau de bord et la démo
 
 ## 📝 Licence
 
-MIT © [PiBOH](https://piboh.github.io/)
+AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 ---
 

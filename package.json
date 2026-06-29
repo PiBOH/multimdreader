@@ -1,7 +1,9 @@
 {
   "name": "multimdreader",
   "private": true,
-  "version": "0.0.7",
+  "author": "PiBOH",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.8",
   "type": "module",
   "scripts": {
     "dev": "vite",

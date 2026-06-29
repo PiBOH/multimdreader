@@ -131,7 +131,7 @@ Wird bei jedem Push auf `main` ausgeführt — stellt Dashboard und Demo auf Git
 
 ## 📝 Lizenz
 
-MIT © [PiBOH](https://piboh.github.io/)
+AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 ---
 

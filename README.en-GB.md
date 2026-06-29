@@ -131,7 +131,7 @@ Runs on every push to `main` — deploys both the dashboard and demo to GitHub P
 
 ## 📝 License
 
-MIT © [PiBOH](https://piboh.github.io/)
+AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 ---
 

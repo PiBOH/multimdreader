@@ -1,12 +1,12 @@
 # Maintainer: PiBOH
 # This PKGBUILD builds MultiMDReader from source for Arch Linux
 pkgname=multimdreader
-pkgver=0.0.7
+pkgver=0.0.8
 pkgrel=1
 pkgdesc="A cross-platform Markdown file reader - no installation required"
 arch=('x86_64')
 url="https://github.com/PiBOH/multimdreader"
-license=('MIT')
+license=('AGPL3')
 depends=('webkit2gtk-4.1' 'gtk3' 'openssl' 'libappindicator-gtk3')
 makedepends=('rust' 'nodejs' 'npm' 'cargo')
 source=("${pkgname}-${pkgver}.tar.gz::https://github.com/PiBOH/multimdreader/archive/refs/tags/v${pkgver}.tar.gz")
