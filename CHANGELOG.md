@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🚀 Windows 7 & Legacy OS Compatibility
 
 - **Windows 7 Support**: Configured `webviewInstallMode` to `embedBootstrapper` in `tauri.conf.json`. This embeds the WebView2 bootstrapper directly within the NSIS installer, ensuring seamless installation on Windows 7 machines where TLS 1.2 or dynamic bootstrapper downloads might fail.
-- **Windows 7 Cargo Compatibility**: Added the `windows7-compat` feature to the Tauri dependency in `Cargo.toml` to guarantee compatibility with legacy Windows API subsystems.
+- **Windows 7 Native Handling**: In Tauri v2, core WebView2 compatibility with Windows 7 operates directly via the embedded bootstrapper without requiring legacy feature flags in `Cargo.toml`.
 - **Windows XP Statement**: Note that Windows XP cannot be supported by Tauri v2 / WebView2. WebView2 is built on Microsoft Edge / Chromium, which permanently dropped support for Windows XP in 2016 (Chrome 49). Additionally, modern Rust toolchains require Windows 7 as the absolute minimum baseline.
 
 ### 📝 Documentation
