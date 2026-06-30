@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.0.8_BETA4] — 2026-06-30
+## [0.0.8_BETA5] — 2026-06-30
 
 ### 🚀 Windows 7 & Legacy OS Compatibility
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 📝 Documentation
 
-- Updated all version references to `0.0.8_BETA4`
+- Updated all version references to `0.0.8_BETA5`
 - Updated `arenaai.md` with explicit details on Windows 7 compatibility configurations and legacy OS limitations.
 
 ---
@@ -199,7 +199,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[0.0.8_BETA4]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA4
+[0.0.8_BETA5]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA5
 [0.0.7_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.7_STABLE
 [0.0.6_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.6_STABLE
 [0.0.5_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.5_STABLE

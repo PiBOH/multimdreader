@@ -9,7 +9,7 @@ import { getCurrentWebview } from '@tauri-apps/api/webview';
 import { listen } from '@tauri-apps/api/event';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.0.8_BETA4';
+const APP_VERSION = '0.0.8_BETA5';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';

@@ -1,0 +1,48 @@
+name: 🚀 Richiesta di Funzionalità (Italiano)
+description: Hai un'idea o una proposta? Condividila!
+title: "[Feat]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 💡 Feature Proposal
+        Aiuta a migliorare MultiMDReader inviando la tua proposta per nuove funzioni o miglioramenti.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 🏷️ Categoria
+      options:
+        - ✨ Nuova Funzione di Lettura / Editor
+        - 🎨 UI / Design Improvement
+        - ⚡ Performance / Ottimizzazione
+        - 🌐 Traduzione / Nuova Lingua
+        - 🖥️ Funzionalità Desktop / Integrazione OS
+        - 🔧 Altro
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 Cosa
+      description: Descrivi in maniera dettagliata la tua idea. Come dovrebbe funzionare?
+      placeholder: "Mi piacerebbe vedere una funzione che consenta di..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🤝 Cosa dovrebbe risolvere/aggiungere/migliorare?
+      description: Perché questa feature è necessaria o utile per la community? Cosa sistemerebbe o renderebbe più veloce?
+      placeholder: "Attualmente è difficile o macchinoso fare..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 🎨 Mockups / Screenshots / Extras
+      description: Trascina qui immagini, sketch o schemi se vuoi illustrare graficamente la tua idea!
