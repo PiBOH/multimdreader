@@ -33,7 +33,7 @@ Exec=multimdreader %f
 Icon=multimdreader
 Terminal=false
 Type=Application
-Categories=Office;TextEditor;Viewer;
+Categories=Utility;Office;TextEditor;Viewer;
 MimeType=text/markdown;text/x-markdown;text/plain;
 EOF
 }

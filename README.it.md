@@ -43,7 +43,7 @@ Scarica l'ultima versione dalla [pagina delle Release](https://github.com/PiBOH/
 | **Linux (Tutte le distro)** | MultiMDReader_\*_amd64.AppImage | `chmod +x && ./MultiMDReader_*.AppImage` |
 | **Linux (Arch)**         | multimdreader-\*.pkg.tar.zst      | `sudo pacman -U *.pkg.tar.zst`           |
 
-> ⚠️ **Nota sui test**: L'autore ha testato esclusivamente le release per Windows. Le build per macOS e Linux sono fornite così come sono e potrebbero contenere problemi specifici della piattaforma. Se riscontri un problema su macOS o Linux, per favore [apri una issue](https://github.com/PiBOH/multimdreader/issues).
+> ⚠️ **Nota sui test**: L'autore ha testato esclusivamente le release per Windows (nello specifico su Windows 11). Le build per macOS e Linux sono fornite così come sono e potrebbero contenere problemi specifici della piattaforma. Se riscontri un problema su macOS o Linux, per favore [apri una issue](https://github.com/PiBOH/multimdreader/issues).
 
 ## 🌐 Prova Online
 
