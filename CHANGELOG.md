@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.8_BETA5] — 2026-06-30
 
+### 🌐 Internationalization & Web Improvements
+
+- **Bilingual GitHub Issue Templates**: Replaced single issue forms with dedicated bilingual English (`bug_report-en.yml`, `feature_request-en.yml`) and Italian (`bug_report-it.yml`, `feature_request-it.yml`) templates in `.github/ISSUE_TEMPLATE/` to better support both local developers and the global open-source community.
+- **Dynamic Live Changelog**: Implemented an asynchronous JavaScript fetcher in `dashboard/index.html` that dynamically retrieves and parses the latest `CHANGELOG.md` directly from the main branch on GitHub, with a built-in fallback for offline viewing.
+- **Smart Cache Detection Banner**: Added an elegant, non-intrusive toast banner (`#cache-notice`) to the dashboard that detects via Navigation Timing APIs if the page was served from browser cache (`transferSize === 0`) and suggests pressing `Ctrl+F5`.
+- **Dynamic Logo Rendering**: Replaced the static text 'M' in the dashboard hero and footer with an `<img>` tag pulling `icon.png` directly from the repository, ensuring automatic logo updates.
+- **Version Updates**: Updated all version references in code and documentation to `0.0.8_BETA5`.
+
+---
+
+## [0.0.8_BETA4] — 2026-06-30
+
 ### 🚀 Windows 7 & Legacy OS Compatibility
 
 - **Windows 7 Support**: Configured `webviewInstallMode` to `embedBootstrapper` in `tauri.conf.json`. This embeds the WebView2 bootstrapper directly within the NSIS installer, ensuring seamless installation on Windows 7 machines where TLS 1.2 or dynamic bootstrapper downloads might fail.
@@ -17,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 📝 Documentation
 
-- Updated all version references to `0.0.8_BETA5`
+- Updated all version references to `0.0.8_BETA4`
 - Updated `arenaai.md` with explicit details on Windows 7 compatibility configurations and legacy OS limitations.
 
 ---
@@ -200,6 +212,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 [0.0.8_BETA5]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA5
+[0.0.8_BETA4]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA4
 [0.0.7_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.7_STABLE
 [0.0.6_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.6_STABLE
 [0.0.5_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.5_STABLE
