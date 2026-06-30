@@ -12,7 +12,7 @@
   <!-- ========== HERO ========== -->
   <header id="top">
     <div class="hero">
-      <div class="hero-logo">M</div>
+      <div class="hero-logo"><img src="https://raw.githubusercontent.com/PiBOH/multimdreader/main/icon.png" alt="MultiMDReader Logo" /></div>
       <h1>MultiMDReader</h1>
       <p class="hero-tagline">🔤 A cross-platform Markdown file reader.<br/>No installation required — just download and run.</p>
       <p class="hero-version">v<span id="version-display">0.0.7_STABLE</span></p>
@@ -193,12 +193,12 @@
     <p>Fetched live from the repository — always up to date.</p>
     <div id="changelog-content">
       <article>
-        <h3>[0.0.8_BETA3]</h3>
+        <h3>[0.0.8_BETA4]</h3>
         <ul>
           <li>Windows 7 compatibility support: set <code>webviewInstallMode</code> to <code>embedBootstrapper</code> in <code>tauri.conf.json</code></li>
           <li>Tauri v2 native Windows 7 support via embedded bootstrapper (legacy feature flag removed)</li>
           <li>Clarified Windows XP legacy engine limitations (Chromium/WebView2 minimum requirement is Windows 7)</li>
-          <li>Updated all version references to <code>0.0.8_BETA3</code></li>
+          <li>Updated all version references to <code>0.0.8_BETA4</code></li>
         </ul>
         <h3>[0.0.7_STABLE]</h3>
         <ul>
@@ -344,7 +344,7 @@ Build:
   <footer>
     <div class="footer-content">
       <div class="footer-logo">
-        <div class="hero-logo small">M</div>
+        <div class="hero-logo small"><img src="https://raw.githubusercontent.com/PiBOH/multimdreader/main/icon.png" alt="MultiMDReader Logo" /></div>
         <span>MultiMDReader</span>
       </div>
       <p>Author: <a href="https://piboh.github.io/" target="_blank" rel="noopener">PiBOH</a> · Repository: <a href="https://github.com/PiBOH/multimdreader" target="_blank" rel="noopener">GitHub</a> · License: AGPL-3.0</p>
@@ -373,6 +373,67 @@ Build:
         document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
       });
     });
+
+    // Live Changelog Fetcher
+    async function fetchChangelog() {
+      try {
+        const res = await fetch('https://raw.githubusercontent.com/PiBOH/multimdreader/main/CHANGELOG.md');
+        if (!res.ok) return;
+        const text = await res.text();
+        
+        const lines = text.split('\n');
+        let html = '<article>';
+        let inList = false;
+        
+        for (let line of lines) {
+          line = line.trim();
+          if (line.startsWith('## [')) {
+            if (inList) { html += '</ul>'; inList = false; }
+            const versionTitle = line.replace('## ', '');
+            html += `<h3>${versionTitle}</h3>`;
+          } else if (line.startsWith('- ') || line.startsWith('* ')) {
+            if (!inList) { html += '<ul>'; inList = true; }
+            let itemText = line.substring(2);
+            itemText = itemText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            itemText = itemText.replace(/`(.*?)`/g, '<code>$1</code>');
+            html += `<li>${itemText}</li>`;
+          } else if (line.startsWith('### ')) {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += `<h4>${line.replace('### ', '')}</h4>`;
+          }
+        }
+        if (inList) html += '</ul>';
+        html += '</article>';
+        
+        const container = document.getElementById('changelog-content');
+        if (container) container.innerHTML = html;
+      } catch (err) {
+        console.warn('Could not fetch live changelog, using built-in fallback:', err);
+      }
+    }
+    fetchChangelog();
+
+    // Cache Detection
+    window.addEventListener('load', () => {
+      try {
+        const nav = performance.getEntriesByType('navigation')[0];
+        if (nav && (nav.transferSize === 0 || nav.type === 'back_forward')) {
+          const notice = document.getElementById('cache-notice');
+          if (notice) notice.style.display = 'flex';
+        }
+      } catch (err) {
+        console.warn('Cache detection not supported:', err);
+      }
+    });
   </script>
+
+  <!-- ========== CACHE NOTICE TOAST ========== -->
+  <div id="cache-notice" class="cache-notice">
+    <div>
+      <strong>ℹ️ Cached View</strong><br/>
+      You may be viewing a cached version of this page. Press <code>Ctrl+F5</code> to ensure latest data.
+    </div>
+    <button onclick="document.getElementById('cache-notice').style.display='none'" title="Dismiss">&times;</button>
+  </div>
 </body>
 </html>

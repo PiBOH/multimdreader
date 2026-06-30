@@ -36,6 +36,7 @@ header { background: var(--accent-grad); padding: 4rem 2rem; text-align: center;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.2);
 }
+.hero-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .hero-logo.small { width: 36px; height: 36px; font-size: 1.1rem; border-radius: .5rem; margin-bottom: 0; margin-right: .5rem; }
 .hero h1 { color: #fff; font-size: 2.5rem; margin-bottom: .5rem; }
 .hero-tagline { color: rgba(255,255,255,.85); font-size: 1.15rem; max-width: 600px; margin: 0 auto 1rem; }
@@ -139,3 +140,23 @@ footer {
   .card-grid { grid-template-columns: 1fr; }
   .struct-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── Cache Notice Toast ────────────────────────────────────── */
+.cache-notice {
+  position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+  background: rgba(30, 41, 59, 0.95); color: #f8fafc;
+  border-left: 4px solid #3b82f6; border-radius: 0.5rem;
+  padding: 0.75rem 1.25rem; font-size: 0.85rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px); display: none;
+  align-items: center; gap: 0.75rem; animation: slideUp 0.3s ease-out;
+}
+body.light .cache-notice {
+  background: rgba(255, 255, 255, 0.95); color: #1e293b;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+}
+.cache-notice button {
+  background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.25rem; padding: 0; line-height: 1; margin-left: 0.5rem;
+}
+.cache-notice button:hover { color: #ef4444; }
+@keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
