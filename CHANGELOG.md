@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.0.8_BETA4] — 2026-06-29
+## [0.0.8_BETA4] — 2026-06-30
 
 ### 🚀 Windows 7 & Legacy OS Compatibility
 
