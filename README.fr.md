@@ -7,7 +7,7 @@
 
 </div>
 
-**Version 0.0.8_BETA2** · Auteur : [PiBOH](https://piboh.github.io/)
+**Version 0.0.8_BETA4** · Auteur : [PiBOH](https://piboh.github.io/)
 
 > 🔤 Un lecteur de fichiers Markdown multiplateforme. Aucune installation requise — téléchargez et lancez.
 
@@ -137,4 +137,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Dépôt** : [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Auteur** : [PiBOH](https://piboh.github.io/)  
-**Version** : 0.0.8_BETA2
+**Version** : 0.0.8_BETA4

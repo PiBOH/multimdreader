@@ -7,7 +7,7 @@
 
 </div>
 
-**Version 0.0.8_BETA2** · Autor: [PiBOH](https://piboh.github.io/)
+**Version 0.0.8_BETA4** · Autor: [PiBOH](https://piboh.github.io/)
 
 > 🔤 Ein plattformübergreifender Markdown-Dateireader. Keine Installation erforderlich — einfach herunterladen und starten.
 
@@ -137,4 +137,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Autor**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.0.8_BETA2
+**Version**: 0.0.8_BETA4
