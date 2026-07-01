@@ -116,7 +116,7 @@ jobs:
 
             TAG="${{ github.ref_name }}"
             VERSION="${TAG#v}"
-            [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.0.8"
+            [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ] && VERSION="0.1.0"
 
             cat > /tmp/multimdreader-pkg/PKGBUILD << PKGBUILDEOF
             pkgname=multimdreader-bin

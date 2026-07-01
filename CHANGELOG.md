@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.0_BETA] — 2026-07-01
+
+### ✨ Major Feature: Markdown Editor Mode
+
+- **Read / Edit Mode Sliding Toggle**: Added an elegant, sliding toggle switch in the header (`READ (toggle) EDIT`) right next to the language selector to switch between viewing and editing modes instantly.
+- **Side-by-Side Editing & Live Preview**: When Edit mode is active, the application displays a full-featured side-by-side view with a plain-text Markdown editor on the left and an instantly updated live preview on the right.
+- **Native Desktop & Browser Saving**: Added a `💾 Save` button to the file info bar (highlighted with an animated teal gradient when there are unsaved changes) and full `Ctrl+S` / `Cmd+S` keyboard shortcut support.
+  - **Tauri Desktop**: Invokes a new Rust command `save_file_content` to save modifications directly back to the original file on disk.
+  - **Browser Demo**: Seamlessly generates a clean blob download of the updated Markdown file.
+- **Translation Updates**: Updated all 6 language locales (`it`, `en-GB`, `en-US`, `es`, `fr`, `de`) with full editing, saving, and shortcut terminology.
+
+---
+
 ## [0.0.8_BETA5] — 2026-06-30
 
 ### 🌐 Internationalization & Web Improvements
@@ -211,6 +224,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.1.0_BETA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.0_BETA
 [0.0.8_BETA5]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA5
 [0.0.8_BETA4]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA4
 [0.0.7_STABLE]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.7_STABLE

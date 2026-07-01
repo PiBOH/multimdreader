@@ -1,27 +1,31 @@
 {
   "app": {
     "name": "MultiMDReader",
-    "tagline": "Lector Markdown Multiplataforma",
-    "version": "0.0.8_BETA5"
+    "tagline": "Lector y Editor Markdown Multiplataforma",
+    "version": "0.1.0_BETA"
   },
   "header": {
     "openFile": "Abrir Archivo",
     "toggleSidebar": "Barra lateral",
     "theme": "Tema",
-    "about": "Acerca de"
+    "about": "Info",
+    "readMode": "READ",
+    "editMode": "EDIT",
+    "switchToRead": "Cambiar a modo Lectura",
+    "switchToEdit": "Cambiar a modo Edición"
   },
   "sidebar": {
     "recentFiles": "Archivos Recientes",
-    "noRecentFiles": "No hay archivos recientes",
+    "noRecentFiles": "Sin archivos recientes",
     "clearAll": "Borrar todo"
   },
   "welcome": {
     "title": "Bienvenido a MultiMDReader",
-    "subtitle": "Tu lector Markdown multiplataforma",
-    "dropHere": "Suelta un archivo Markdown aquí",
+    "subtitle": "Tu lector y editor Markdown multiplataforma",
+    "dropHere": "Arrastra un archivo Markdown aquí",
     "or": "o",
     "clickToOpen": "Haz clic para abrir un archivo",
-    "supportedFormats": "Formatos compatibles: .md, .markdown, .mdown, .mkd, .mkdn, .mdwn, .mdtxt, .mdtext, .txt"
+    "supportedFormats": "Formatos soportados: .md, .markdown, .mdown, .mkd, .mkdn, .mdwn, .mdtxt, .mdtext, .txt"
   },
   "about": {
     "title": "Acerca de MultiMDReader",
@@ -29,7 +33,7 @@
     "author": "Autor",
     "website": "Sitio Web",
     "repository": "Repositorio",
-    "description": "Un lector de archivos Markdown multiplataforma, listo para usar sin instalación. Disponible para Windows, macOS y Linux.",
+    "description": "Un lector y editor de archivos Markdown multiplataforma, listo para usar sin instalación. Disponible para Windows, macOS y Linux.",
     "close": "Cerrar"
   },
   "reader": {
@@ -39,7 +43,15 @@
     "fileName": "Archivo",
     "fileSize": "Tamaño",
     "lastModified": "Última modificación",
-    "closeFile": "Cerrar archivo"
+    "closeFile": "Cerrar archivo",
+    "saveFile": "Guardar",
+    "unsavedChanges": "Guardar cambios"
+  },
+  "editor": {
+    "editorTab": "Editor Markdown",
+    "previewTab": "Vista Previa",
+    "unsaved": "sin guardar",
+    "placeholder": "Escribe tu markdown aquí..."
   },
   "theme": {
     "light": "Claro",
@@ -55,14 +67,16 @@
   },
   "errors": {
     "fileReadError": "Error al leer el archivo",
-    "unsupportedFile": "Formato de archivo no compatible",
-    "noFileSelected": "Ningún archivo seleccionado"
+    "unsupportedFile": "Formato de archivo no soportado",
+    "noFileSelected": "Ningún archivo seleccionado",
+    "fileSaveError": "Error al guardar el archivo"
   },
   "shortcuts": {
     "title": "Atajos de teclado",
     "openFile": "Abrir archivo",
+    "saveFile": "Guardar archivo",
     "toggleSidebar": "Barra lateral",
-    "toggleDark": "Cambiar tema oscuro/claro",
-    "close": "Cerrar diálogo"
+    "toggleDark": "Tema oscuro/claro",
+    "close": "Cerrar ventana"
   }
 }

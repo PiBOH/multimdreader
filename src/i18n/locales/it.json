@@ -1,14 +1,18 @@
 {
   "app": {
     "name": "MultiMDReader",
-    "tagline": "Lettore Markdown Multipiattaforma",
-    "version": "0.0.8_BETA5"
+    "tagline": "Lettore ed Editor Markdown Multipiattaforma",
+    "version": "0.1.0_BETA"
   },
   "header": {
     "openFile": "Apri File",
     "toggleSidebar": "Barra laterale",
     "theme": "Tema",
-    "about": "Info"
+    "about": "Info",
+    "readMode": "READ",
+    "editMode": "EDIT",
+    "switchToRead": "Passa alla modalità Lettura",
+    "switchToEdit": "Passa alla modalità Modifica"
   },
   "sidebar": {
     "recentFiles": "File Recenti",
@@ -17,7 +21,7 @@
   },
   "welcome": {
     "title": "Benvenuto in MultiMDReader",
-    "subtitle": "Il tuo lettore Markdown multipiattaforma",
+    "subtitle": "Il tuo lettore ed editor Markdown multipiattaforma",
     "dropHere": "Trascina qui un file Markdown",
     "or": "oppure",
     "clickToOpen": "Clicca per aprire un file",
@@ -29,7 +33,7 @@
     "author": "Autore",
     "website": "Sito Web",
     "repository": "Repository",
-    "description": "Un lettore di file Markdown multipiattaforma, pronto all'uso senza installazione. Disponibile per Windows, macOS e Linux.",
+    "description": "Un lettore ed editor di file Markdown multipiattaforma, pronto all'uso senza installazione. Disponibile per Windows, macOS e Linux.",
     "close": "Chiudi"
   },
   "reader": {
@@ -39,7 +43,15 @@
     "fileName": "File",
     "fileSize": "Dimensione",
     "lastModified": "Ultima modifica",
-    "closeFile": "Chiudi file"
+    "closeFile": "Chiudi file",
+    "saveFile": "Salva",
+    "unsavedChanges": "Salva modifiche"
+  },
+  "editor": {
+    "editorTab": "Markdown Editor",
+    "previewTab": "Anteprima dal vivo",
+    "unsaved": "non salvato",
+    "placeholder": "Scrivi il tuo markdown qui..."
   },
   "theme": {
     "light": "Chiaro",
@@ -56,11 +68,13 @@
   "errors": {
     "fileReadError": "Errore durante la lettura del file",
     "unsupportedFile": "Formato file non supportato",
-    "noFileSelected": "Nessun file selezionato"
+    "noFileSelected": "Nessun file selezionato",
+    "fileSaveError": "Errore durante il salvataggio del file"
   },
   "shortcuts": {
     "title": "Scorciatoie da tastiera",
     "openFile": "Apri file",
+    "saveFile": "Salva file",
     "toggleSidebar": "Barra laterale",
     "toggleDark": "Tema scuro/chiaro",
     "close": "Chiudi finestra"

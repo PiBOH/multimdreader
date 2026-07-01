@@ -1,14 +1,18 @@
 {
   "app": {
     "name": "MultiMDReader",
-    "tagline": "Cross-Platform Markdown Reader",
-    "version": "0.0.8_BETA5"
+    "tagline": "Cross-Platform Markdown Reader & Editor",
+    "version": "0.1.0_BETA"
   },
   "header": {
     "openFile": "Open File",
-    "toggleSidebar": "Sidebar",
+    "toggleSidebar": "Toggle Sidebar",
     "theme": "Theme",
-    "about": "About"
+    "about": "About",
+    "readMode": "READ",
+    "editMode": "EDIT",
+    "switchToRead": "Switch to Read mode",
+    "switchToEdit": "Switch to Edit mode"
   },
   "sidebar": {
     "recentFiles": "Recent Files",
@@ -17,7 +21,7 @@
   },
   "welcome": {
     "title": "Welcome to MultiMDReader",
-    "subtitle": "Your cross-platform Markdown reader",
+    "subtitle": "Your cross-platform Markdown reader & editor",
     "dropHere": "Drop a Markdown file here",
     "or": "or",
     "clickToOpen": "Click to open a file",
@@ -29,7 +33,7 @@
     "author": "Author",
     "website": "Website",
     "repository": "Repository",
-    "description": "A cross-platform Markdown file reader, ready to use without installation. Available for Windows, macOS, and Linux.",
+    "description": "A cross-platform Markdown reader and editor, ready to use with no installation required. Available for Windows, macOS, and Linux.",
     "close": "Close"
   },
   "reader": {
@@ -39,7 +43,15 @@
     "fileName": "File",
     "fileSize": "Size",
     "lastModified": "Last modified",
-    "closeFile": "Close file"
+    "closeFile": "Close file",
+    "saveFile": "Save",
+    "unsavedChanges": "Save changes"
+  },
+  "editor": {
+    "editorTab": "Markdown Editor",
+    "previewTab": "Live Preview",
+    "unsaved": "unsaved",
+    "placeholder": "Write your markdown here..."
   },
   "theme": {
     "light": "Light",
@@ -56,13 +68,15 @@
   "errors": {
     "fileReadError": "Error reading file",
     "unsupportedFile": "Unsupported file format",
-    "noFileSelected": "No file selected"
+    "noFileSelected": "No file selected",
+    "fileSaveError": "Error saving file"
   },
   "shortcuts": {
     "title": "Keyboard Shortcuts",
     "openFile": "Open file",
+    "saveFile": "Save file",
     "toggleSidebar": "Toggle sidebar",
-    "toggleDark": "Toggle dark/light theme",
-    "close": "Close dialogue"
+    "toggleDark": "Toggle theme",
+    "close": "Close dialog"
   }
 }

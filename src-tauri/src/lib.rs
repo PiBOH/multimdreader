@@ -75,12 +75,17 @@ fn read_file_data(path: String) -> Result<FileData, String> {
     })
 }
 
+#[tauri::command]
+fn save_file_content(path: String, content: String) -> Result<(), String> {
+    fs::write(&path, content).map_err(|e| format!("Failed to save file: {}", e))
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let opened_urls = OpenedUrls(Mutex::new(vec![]));
     tauri::Builder::default()
         .manage(opened_urls)
-        .invoke_handler(tauri::generate_handler![get_opened_files, read_file_data])
+        .invoke_handler(tauri::generate_handler![get_opened_files, read_file_data, save_file_content])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         .run(|app, event| {

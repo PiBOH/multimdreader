@@ -10,7 +10,7 @@ import { listen } from '@tauri-apps/api/event';
 import appIcon from './icon.png';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.0.8_BETA5';
+const APP_VERSION = '0.1.0_BETA';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
@@ -28,6 +28,7 @@ interface RecentFile {
   content: string;
   lastOpened: number;
   size: number;
+  path?: string;
 }
 
 // ─── Utility Functions ────────────────────────────────────────────
@@ -165,6 +166,14 @@ function IconChevronDown() {
   );
 }
 
+function IconSave() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+    </svg>
+  );
+}
+
 // ─── Code Block Component with Copy Button ────────────────────────
 function CodeBlock({ children, className, ...props }: {
   children: ReactNode;
@@ -201,7 +210,7 @@ function CodeBlock({ children, className, ...props }: {
       <button
         onClick={handleCopy}
         className="copy-btn absolute top-2 right-2 p-1.5 rounded-md bg-gray-700/80 hover:bg-gray-600 text-gray-300 hover:text-white transition-colors z-10"
-        title={t('reader.copyCode')}
+        title={t('reader.copyCode', 'Copy code')}
       >
         {copied ? <IconCheck /> : <IconCopy />}
       </button>
@@ -217,8 +226,12 @@ export default function App() {
   const { t, i18n } = useTranslation();
   const [currentContent, setCurrentContent] = useState<string>('');
   const [currentFileName, setCurrentFileName] = useState<string>('');
+  const [currentFilePath, setCurrentFilePath] = useState<string>('');
   const [currentFileSize, setCurrentFileSize] = useState<number>(0);
   const [currentFileModified, setCurrentFileModified] = useState<number>(0);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
+
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>(() => {
     try {
       const stored = localStorage.getItem('multimdreader-recent-files');
@@ -240,13 +253,6 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
-
-  // Scroll to top when content changes
-  useEffect(() => {
-    if (currentContent && mainRef.current) {
-      mainRef.current.scrollTop = 0;
-    }
-  }, [currentContent, currentFileName]);
 
   // Persist dark mode
   useEffect(() => {
@@ -274,9 +280,43 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // Keyboard shortcuts
+  // Save File Logic (Tauri native save vs Browser download)
+  const saveFile = useCallback(async () => {
+    if (!currentContent && !currentFileName) return;
+    if ('__TAURI_INTERNALS__' in window && currentFilePath) {
+      try {
+        await invoke('save_file_content', { path: currentFilePath, content: currentContent });
+        setHasUnsavedChanges(false);
+        setCurrentFileModified(Date.now());
+      } catch (err) {
+        console.error('Save error:', err);
+        setFileReadError(t('errors.fileSaveError', 'Failed to save file'));
+        setTimeout(() => setFileReadError(null), 3000);
+      }
+    } else {
+      // Browser fallback: Download file
+      const blob = new Blob([currentContent], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = currentFileName || 'document.md';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setHasUnsavedChanges(false);
+      setCurrentFileModified(Date.now());
+    }
+  }, [currentContent, currentFileName, currentFilePath, t]);
+
+  // Keyboard shortcuts (including Ctrl+S for Save)
   useEffect(() => {
     function handleKeyboard(e: KeyboardEvent) {
+      // Ctrl/Cmd + S: Save file
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveFile();
+      }
       // Ctrl/Cmd + O: Open file
       if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
         e.preventDefault();
@@ -300,12 +340,12 @@ export default function App() {
     }
     document.addEventListener('keydown', handleKeyboard);
     return () => document.removeEventListener('keydown', handleKeyboard);
-  }, []);
+  }, [saveFile]);
 
   // Open file via Tauri backend (CLI args, macOS events, Tauri drag & drop)
   const openTauriPath = useCallback(async (path: string) => {
     if (!isSupportedFile(path)) {
-      setFileReadError(t('errors.unsupportedFile'));
+      setFileReadError(t('errors.unsupportedFile', 'Unsupported file type'));
       setTimeout(() => setFileReadError(null), 3000);
       return;
     }
@@ -314,18 +354,20 @@ export default function App() {
       const data = await invoke<{ name: string; content: string; size: number; modified: number }>('read_file_data', { path });
       setCurrentContent(data.content);
       setCurrentFileName(data.name);
+      setCurrentFilePath(path);
       setCurrentFileSize(data.size);
       setCurrentFileModified(data.modified);
+      setHasUnsavedChanges(false);
       setRecentFiles(prev => {
         const filtered = prev.filter(f => f.name !== data.name);
         const storedContent = data.content.length > MAX_RECENT_CONTENT_SIZE
           ? data.content.slice(0, MAX_RECENT_CONTENT_SIZE) + '\n\n... [content truncated for storage]'
           : data.content;
-        return [{ name: data.name, content: storedContent, lastOpened: Date.now(), size: data.size }, ...filtered].slice(0, MAX_RECENT_FILES);
+        return [{ name: data.name, content: storedContent, lastOpened: Date.now(), size: data.size, path }, ...filtered].slice(0, MAX_RECENT_FILES);
       });
     } catch (err) {
       console.error(err);
-      setFileReadError(t('errors.fileReadError'));
+      setFileReadError(t('errors.fileReadError', 'Failed to read file'));
       setTimeout(() => setFileReadError(null), 3000);
     }
   }, [t]);
@@ -391,7 +433,7 @@ export default function App() {
 
   const openFile = useCallback((file: File) => {
     if (!isSupportedFile(file.name)) {
-      setFileReadError(t('errors.unsupportedFile'));
+      setFileReadError(t('errors.unsupportedFile', 'Unsupported file type'));
       setTimeout(() => setFileReadError(null), 3000);
       return;
     }
@@ -401,8 +443,10 @@ export default function App() {
       const content = e.target?.result as string;
       setCurrentContent(content);
       setCurrentFileName(file.name);
+      setCurrentFilePath(''); // Browser file object
       setCurrentFileSize(file.size);
       setCurrentFileModified(file.lastModified);
+      setHasUnsavedChanges(false);
       setRecentFiles(prev => {
         const filtered = prev.filter(f => f.name !== file.name);
         const storedContent = content.length > MAX_RECENT_CONTENT_SIZE
@@ -411,9 +455,8 @@ export default function App() {
         return [{ name: file.name, content: storedContent, lastOpened: Date.now(), size: file.size }, ...filtered].slice(0, MAX_RECENT_FILES);
       });
     };
-    // BUG FIX: Added onerror handler for FileReader
     reader.onerror = () => {
-      setFileReadError(t('errors.fileReadError'));
+      setFileReadError(t('errors.fileReadError', 'Failed to read file'));
       setTimeout(() => setFileReadError(null), 3000);
     };
     reader.readAsText(file);
@@ -422,11 +465,13 @@ export default function App() {
   const closeFile = useCallback(() => {
     setCurrentContent('');
     setCurrentFileName('');
+    setCurrentFilePath('');
     setCurrentFileSize(0);
     setCurrentFileModified(0);
+    setHasUnsavedChanges(false);
+    setIsEditMode(false);
   }, []);
 
-  // BUG FIX: Properly typed as React.ChangeEvent<HTMLInputElement>
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) openFile(file);
@@ -449,7 +494,6 @@ export default function App() {
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    // Only set dragging false if we're leaving the main area
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX;
     const y = e.clientY;
@@ -459,11 +503,17 @@ export default function App() {
   }, []);
 
   const openRecentFile = useCallback((file: RecentFile) => {
-    setCurrentContent(file.content);
-    setCurrentFileName(file.name);
-    setCurrentFileSize(file.size);
-    setCurrentFileModified(file.lastOpened);
-  }, []);
+    if (file.path && '__TAURI_INTERNALS__' in window) {
+      openTauriPath(file.path);
+    } else {
+      setCurrentContent(file.content);
+      setCurrentFileName(file.name);
+      setCurrentFilePath('');
+      setCurrentFileSize(file.size);
+      setCurrentFileModified(file.lastOpened);
+      setHasUnsavedChanges(false);
+    }
+  }, [openTauriPath]);
 
   const clearRecentFiles = useCallback(() => {
     setRecentFiles([]);
@@ -479,12 +529,12 @@ export default function App() {
   }, [i18n]);
 
   const languages = [
-    { code: 'it', label: t('language.it'), flag: '🇮🇹' },
-    { code: 'en-GB', label: t('language.enGB'), flag: '🇬🇧' },
-    { code: 'en-US', label: t('language.enUS'), flag: '🇺🇸' },
-    { code: 'es', label: t('language.es'), flag: '🇪🇸' },
-    { code: 'de', label: t('language.de'), flag: '🇩🇪' },
-    { code: 'fr', label: t('language.fr'), flag: '🇫🇷' },
+    { code: 'it', label: t('language.it', 'Italiano'), flag: '🇮🇹' },
+    { code: 'en-GB', label: t('language.enGB', 'English (UK)'), flag: '🇬🇧' },
+    { code: 'en-US', label: t('language.enUS', 'English (US)'), flag: '🇺🇸' },
+    { code: 'es', label: t('language.es', 'Español'), flag: '🇪🇸' },
+    { code: 'de', label: t('language.de', 'Deutsch'), flag: '🇩🇪' },
+    { code: 'fr', label: t('language.fr', 'Français'), flag: '🇫🇷' },
   ];
 
   const localeForDates = getLocaleForDateFormat(i18n.language);
@@ -505,7 +555,7 @@ export default function App() {
         <button
           onClick={() => setSidebarOpen(prev => !prev)}
           className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          title={t('header.toggleSidebar') + ' (Ctrl+B)'}
+          title={t('header.toggleSidebar', 'Toggle sidebar') + ' (Ctrl+B)'}
         >
           <IconSidebar />
         </button>
@@ -514,7 +564,7 @@ export default function App() {
         <button
           onClick={() => fileInputRef.current?.click()}
           className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          title={t('header.openFile') + ' (Ctrl+O)'}
+          title={t('header.openFile', 'Open file') + ' (Ctrl+O)'}
         >
           <IconOpenFile />
         </button>
@@ -533,6 +583,27 @@ export default function App() {
         {fileReadError && (
           <div className="px-3 py-1.5 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg text-sm animate-pulse">
             {fileReadError}
+          </div>
+        )}
+
+        {/* Read / Edit Mode Sliding Toggle */}
+        {currentContent !== '' && (
+          <div className="flex items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300 shadow-inner my-auto">
+            <span className={!isEditMode ? 'text-blue-600 dark:text-blue-400 font-bold' : ''}>{t('header.readMode', 'READ')}</span>
+            <button
+              onClick={() => setIsEditMode(prev => !prev)}
+              className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                isEditMode ? 'bg-purple-600' : 'bg-blue-500'
+              }`}
+              title={isEditMode ? t('header.switchToRead', 'Switch to Read mode') : t('header.switchToEdit', 'Switch to Edit mode')}
+            >
+              <span
+                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  isEditMode ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+            <span className={isEditMode ? 'text-purple-600 dark:text-purple-400 font-bold' : ''}>{t('header.editMode', 'EDIT')}</span>
           </div>
         )}
 
@@ -568,7 +639,7 @@ export default function App() {
         <button
           onClick={() => setDarkMode(prev => !prev)}
           className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          title={t('header.theme') + ' (Ctrl+D)'}
+          title={t('header.theme', 'Toggle theme') + ' (Ctrl+D)'}
         >
           {darkMode ? <IconSun /> : <IconMoon />}
         </button>
@@ -577,7 +648,7 @@ export default function App() {
         <button
           onClick={() => setAboutOpen(true)}
           className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          title={t('header.about')}
+          title={t('header.about', 'About')}
         >
           <IconInfo />
         </button>
@@ -590,13 +661,13 @@ export default function App() {
           <aside className="w-64 shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <h2 className="font-semibold text-sm uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                {t('sidebar.recentFiles')}
+                {t('sidebar.recentFiles', 'Recent Files')}
               </h2>
               {recentFiles.length > 0 && (
                 <button
                   onClick={clearRecentFiles}
                   className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-red-500"
-                  title={t('sidebar.clearAll')}
+                  title={t('sidebar.clearAll', 'Clear all')}
                 >
                   <IconTrash />
                 </button>
@@ -605,7 +676,7 @@ export default function App() {
             <div className="flex-1 overflow-y-auto">
               {recentFiles.length === 0 ? (
                 <div className="px-4 py-8 text-center text-gray-400 dark:text-gray-500 text-sm">
-                  {t('sidebar.noRecentFiles')}
+                  {t('sidebar.noRecentFiles', 'No recent files')}
                 </div>
               ) : (
                 <ul className="py-1">
@@ -635,11 +706,12 @@ export default function App() {
 
             {/* Shortcuts hint */}
             <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500">
-              <div className="font-semibold mb-1">{t('shortcuts.title')}</div>
+              <div className="font-semibold mb-1">{t('shortcuts.title', 'Keyboard Shortcuts')}</div>
               <div className="space-y-0.5">
-                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+O</kbd> {t('shortcuts.openFile')}</div>
-                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+B</kbd> {t('shortcuts.toggleSidebar')}</div>
-                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+D</kbd> {t('shortcuts.toggleDark')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+O</kbd> {t('shortcuts.openFile', 'Open file')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+S</kbd> {t('shortcuts.saveFile', 'Save file')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+B</kbd> {t('shortcuts.toggleSidebar', 'Toggle sidebar')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+D</kbd> {t('shortcuts.toggleDark', 'Toggle theme')}</div>
               </div>
             </div>
           </aside>
@@ -648,7 +720,7 @@ export default function App() {
         {/* Main Area */}
         <main
           ref={mainRef}
-          className="flex-1 overflow-y-auto"
+          className="flex-1 overflow-y-auto flex flex-col relative"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -660,58 +732,132 @@ export default function App() {
                 <IconOpenFile />
               </div>
               <p className="text-blue-600 dark:text-blue-400 font-medium text-lg">
-                {t('welcome.dropHere')}
+                {t('welcome.dropHere', 'Drop file here')}
               </p>
             </div>
           )}
 
-          {currentContent ? (
-            <div className="flex flex-col h-full">
+          {currentContent !== '' || currentFileName ? (
+            <div className="flex flex-col h-full flex-1">
               {/* File info bar */}
               <div className="flex items-center gap-4 px-6 py-2 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400 shrink-0 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <IconFile />
-                  <span>{t('reader.fileName')}: <strong className="text-gray-700 dark:text-gray-300">{currentFileName}</strong></span>
+                  <span>{t('reader.fileName', 'File')}: <strong className="text-gray-700 dark:text-gray-300">{currentFileName}</strong></span>
                 </div>
-                <span>{t('reader.fileSize')}: {formatFileSize(currentFileSize)}</span>
-                <span>{t('reader.lastModified')}: {formatDate(currentFileModified, localeForDates)}</span>
+                <span>{t('reader.fileSize', 'Size')}: {formatFileSize(currentFileSize)}</span>
+                <span>{t('reader.lastModified', 'Modified')}: {formatDate(currentFileModified, localeForDates)}</span>
+                
                 <div className="flex-1" />
+
+                {/* Save Button */}
+                <button
+                  onClick={saveFile}
+                  className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded-lg font-medium transition-all shadow-sm ${
+                    hasUnsavedChanges
+                      ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:shadow-md animate-pulse'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                  title={t('reader.saveFile', 'Save File') + ' (Ctrl+S)'}
+                >
+                  <IconSave />
+                  {hasUnsavedChanges ? t('reader.unsavedChanges', 'Save changes') : t('reader.saveFile', 'Save')}
+                </button>
+
+                {/* Close Button */}
                 <button
                   onClick={closeFile}
                   className="px-3 py-1 text-xs rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400"
-                  title={t('reader.closeFile')}
+                  title={t('reader.closeFile', 'Close file')}
                 >
-                  {t('reader.closeFile')}
+                  {t('reader.closeFile', 'Close')}
                 </button>
               </div>
 
-              {/* Markdown Content */}
-              <div className="flex-1 overflow-y-auto px-6 py-8">
-                <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeHighlight]}
-                    components={{
-                      code({ className, children, ...props }) {
-                        const isInline = !className;
-                        if (isInline) {
-                          return (
-                            <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono" {...props}>
-                              {children}
-                            </code>
-                          );
-                        }
-                        return (
-                          <CodeBlock className={className} {...props}>
-                            {children}
-                          </CodeBlock>
-                        );
-                      },
-                    }}
-                  >
-                    {currentContent}
-                  </ReactMarkdown>
-                </article>
+              {/* Editing & Reading Content Area */}
+              <div className="flex-1 flex overflow-hidden">
+                {isEditMode ? (
+                  <div className="flex-1 flex flex-col md:flex-row overflow-hidden w-full">
+                    {/* Editor / Textarea */}
+                    <div className="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50/50 dark:bg-gray-900/50">
+                      <div className="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider flex items-center justify-between">
+                        <span>{t('editor.editorTab', 'Markdown Editor')}</span>
+                        {hasUnsavedChanges && <span className="text-teal-600 dark:text-teal-400 font-normal lowercase">• {t('editor.unsaved', 'unsaved')}</span>}
+                      </div>
+                      <textarea
+                        value={currentContent}
+                        onChange={(e) => {
+                          setCurrentContent(e.target.value);
+                          setHasUnsavedChanges(true);
+                        }}
+                        className="flex-1 w-full p-6 bg-transparent resize-none font-mono text-sm focus:outline-none text-gray-800 dark:text-gray-200 leading-relaxed overflow-y-auto"
+                        placeholder={t('editor.placeholder', 'Write your markdown here...')}
+                      />
+                    </div>
+                    {/* Live Preview */}
+                    <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-gray-900">
+                      <div className="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider">
+                        {t('editor.previewTab', 'Live Preview')}
+                      </div>
+                      <div className="flex-1 overflow-y-auto px-6 py-6">
+                        <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            rehypePlugins={[rehypeHighlight]}
+                            components={{
+                              code({ className, children, ...props }) {
+                                const isInline = !className;
+                                if (isInline) {
+                                  return (
+                                    <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono" {...props}>
+                                      {children}
+                                    </code>
+                                  );
+                                }
+                                return (
+                                  <CodeBlock className={className} {...props}>
+                                    {children}
+                                  </CodeBlock>
+                                );
+                              },
+                            }}
+                          >
+                            {currentContent}
+                          </ReactMarkdown>
+                        </article>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Standard Single-Column Read Mode */
+                  <div className="flex-1 overflow-y-auto px-6 py-8 w-full">
+                    <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0 mx-auto">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[rehypeHighlight]}
+                        components={{
+                          code({ className, children, ...props }) {
+                            const isInline = !className;
+                            if (isInline) {
+                              return (
+                                <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono" {...props}>
+                                  {children}
+                                </code>
+                              );
+                            }
+                            return (
+                              <CodeBlock className={className} {...props}>
+                                {children}
+                              </CodeBlock>
+                            );
+                          },
+                        }}
+                      >
+                        {currentContent}
+                      </ReactMarkdown>
+                    </article>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -795,7 +941,7 @@ function WelcomeScreen({ onOpenFile }: { onOpenFile: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center justify-center h-full p-8">
+    <div className="flex items-center justify-center h-full p-8 my-auto">
       <div className="text-center max-w-lg">
         <div className="w-24 h-24 rounded-3xl overflow-hidden flex items-center justify-center mx-auto mb-6 shadow-xl bg-gradient-to-br from-blue-500 to-purple-600">
           <img src={appIcon} alt="Logo" className="w-full h-full object-cover" />
