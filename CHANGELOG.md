@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.2_RC2] — 2026-07-01
+
+### ✨ Advanced Editor Suite & Productivity Enhancements
+
+- **Markdown Formatting Toolbar (`EditorToolbar`)**: Added an interactive formatting toolbar in Edit mode with quick-insert buttons for Grassetto (`**`), Corsivo (`*`), Barrato (`~~`), Headings (H1-H3), Code Blocks (```), Inline Code, Links, Markdown Tables, Task Checklists (`- [ ]`), Blockquotes, and Horizontal Rules. Includes intelligent text-selection wrapping and auto-focusing.
+- **Real-Time Document Statistics (`DocumentStats`)**: Embedded a live statistics counter in the file info bar showing total words, characters, lines, and estimated reading time (~200 WPM).
+- **In-Document Search (`SearchBar`)**: Added a full-featured search bar accessible via `Ctrl+F` / `Cmd+F` or the new `🔍 Find` toolbar button. Supports case-insensitive matching, match count badge ("X of Y"), previous/next navigation (`Enter` / `Shift+Enter`), and automatic scroll-to-highlight in Edit mode.
+- **Standalone HTML & PDF Export (`ExportMenu`)**: Added an export dropdown menu to the file info bar:
+  - **Standalone HTML**: Exports the currently rendered Markdown into a self-contained `.html` file with embedded GitHub-dark/light CSS and typography styling for offline distribution.
+  - **Print / PDF**: Direct integration with `window.print()` for clean PDF document generation.
+- **Bidirectional Synchronized Scrolling**: Implemented smooth, feedback-loop-free synchronized scrolling between the Markdown editor textarea and the Live Preview pane.
+- **Symmetric i18n Expansion**: Updated all 6 supported language locales (`it`, `en-US`, `en-GB`, `es`, `fr`, `de`) with full translations for toolbar actions, statistics, search interface, and export options.
+
+---
+
 ## [0.1.1_RC1] — 2026-07-01
 
 ### ✨ UX & Markdown Rendering Perfection

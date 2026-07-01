@@ -9,9 +9,13 @@ import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
 import { listen } from '@tauri-apps/api/event';
 import appIcon from './icon.png';
+import { EditorToolbar } from './components/EditorToolbar';
+import { DocumentStats } from './components/DocumentStats';
+import { SearchBar } from './components/SearchBar';
+import { ExportMenu } from './components/ExportMenu';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.1.1_RC1';
+const APP_VERSION = '0.1.2_RC2';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
@@ -248,6 +252,34 @@ export default function App() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
   const [aboutOpen, setAboutOpen] = useState<boolean>(false);
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const isScrollingRef = useRef<'editor' | 'preview' | null>(null);
+
+  const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    if (isScrollingRef.current === 'preview' || !previewRef.current) return;
+    isScrollingRef.current = 'editor';
+    const textarea = e.currentTarget;
+    const scrollRatio = textarea.scrollTop / (textarea.scrollHeight - textarea.clientHeight || 1);
+    const preview = previewRef.current;
+    preview.scrollTop = scrollRatio * (preview.scrollHeight - preview.clientHeight || 1);
+    setTimeout(() => {
+      if (isScrollingRef.current === 'editor') isScrollingRef.current = null;
+    }, 50);
+  };
+
+  const handlePreviewScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (isScrollingRef.current === 'editor' || !textareaRef.current) return;
+    isScrollingRef.current = 'preview';
+    const preview = e.currentTarget;
+    const scrollRatio = preview.scrollTop / (preview.scrollHeight - preview.clientHeight || 1);
+    const textarea = textareaRef.current;
+    textarea.scrollTop = scrollRatio * (textarea.scrollHeight - textarea.clientHeight || 1);
+    setTimeout(() => {
+      if (isScrollingRef.current === 'preview') isScrollingRef.current = null;
+    }, 50);
+  };
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState<boolean>(false);
   const [fileReadError, setFileReadError] = useState<string | null>(null);
@@ -333,10 +365,16 @@ export default function App() {
         e.preventDefault();
         setDarkMode(prev => !prev);
       }
-      // Escape: Close about dialog
+      // Ctrl/Cmd + F: Find in document
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        setIsSearchOpen(prev => !prev);
+      }
+      // Escape: Close about dialog or search
       if (e.key === 'Escape') {
         setAboutOpen(false);
         setLangDropdownOpen(false);
+        setIsSearchOpen(false);
       }
     }
     document.addEventListener('keydown', handleKeyboard);
@@ -721,6 +759,7 @@ export default function App() {
                 <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+S</kbd> {t('shortcuts.saveFile', 'Save file')}</div>
                 <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+B</kbd> {t('shortcuts.toggleSidebar', 'Toggle sidebar')}</div>
                 <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+D</kbd> {t('shortcuts.toggleDark', 'Toggle theme')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+F</kbd> {t('shortcuts.find', 'Find in document')}</div>
               </div>
             </div>
           </aside>
@@ -757,7 +796,25 @@ export default function App() {
                 <span>{t('reader.fileSize', 'Size')}: {formatFileSize(currentFileSize)}</span>
                 <span>{t('reader.lastModified', 'Modified')}: {formatDate(currentFileModified, localeForDates)}</span>
                 
+                <DocumentStats content={currentContent} />
+
                 <div className="flex-1" />
+
+                {/* Search Button */}
+                <button
+                  onClick={() => setIsSearchOpen(prev => !prev)}
+                  className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-lg font-medium bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-sm"
+                  title={t('shortcuts.find', 'Find in document') + ' (Ctrl+F)'}
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <span>{t('shortcuts.find', 'Find')}</span>
+                </button>
+
+                {/* Export Button */}
+                <ExportMenu fileName={currentFileName} content={currentContent} />
 
                 {/* Save Button */}
                 <button
@@ -784,6 +841,12 @@ export default function App() {
               </div>
 
               {/* Editing & Reading Content Area */}
+              <SearchBar
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
+                content={currentContent}
+                textareaRef={textareaRef}
+              />
               <div className="flex-1 flex overflow-hidden">
                 {isEditMode ? (
                   <div className="flex-1 flex flex-col md:flex-row overflow-hidden w-full">
@@ -793,7 +856,17 @@ export default function App() {
                         <span>{t('editor.editorTab', 'Markdown Editor')}</span>
                         {hasUnsavedChanges && <span className="text-teal-600 dark:text-teal-400 font-normal lowercase">• {t('editor.unsaved', 'unsaved')}</span>}
                       </div>
+                      <EditorToolbar
+                        textareaRef={textareaRef}
+                        content={currentContent}
+                        onContentChange={(newVal) => {
+                          setCurrentContent(newVal);
+                          setHasUnsavedChanges(true);
+                        }}
+                      />
                       <textarea
+                        ref={textareaRef}
+                        onScroll={handleEditorScroll}
                         value={currentContent}
                         onChange={(e) => {
                           setCurrentContent(e.target.value);
@@ -808,7 +881,7 @@ export default function App() {
                       <div className="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider">
                         {t('editor.previewTab', 'Live Preview')}
                       </div>
-                      <div className="flex-1 overflow-y-auto px-6 py-6">
+                      <div ref={previewRef} onScroll={handlePreviewScroll} className="flex-1 overflow-y-auto px-6 py-6">
                         <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0">
                           <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
@@ -846,7 +919,7 @@ export default function App() {
                   </div>
                 ) : (
                   /* Standard Single-Column Read Mode */
-                  <div className="flex-1 overflow-y-auto px-6 py-8 w-full">
+                  <div ref={previewRef} className="flex-1 overflow-y-auto px-6 py-8 w-full">
                     <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0 mx-auto">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}

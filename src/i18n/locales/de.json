@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Plattformübergreifender Markdown-Reader & Editor",
-    "version": "0.1.1_RC1"
+    "version": "0.1.2_RC2"
   },
   "header": {
     "openFile": "Datei öffnen",
@@ -77,6 +77,42 @@
     "saveFile": "Datei speichern",
     "toggleSidebar": "Seitenleiste",
     "toggleDark": "Dunkles/Helles Design",
-    "close": "Fenster schließen"
+    "close": "Fenster schließen",
+    "find": "Im Dokument suchen",
+    "export": "Dokument exportieren"
+  },
+  "toolbar": {
+    "bold": "Fett",
+    "italic": "Kursiv",
+    "strikethrough": "Durchgestrichen",
+    "heading1": "Überschrift 1",
+    "heading2": "Überschrift 2",
+    "heading3": "Überschrift 3",
+    "code": "Codeblock",
+    "inlineCode": "Inline-Code",
+    "link": "Link",
+    "table": "Tabelle",
+    "checkbox": "Checkliste",
+    "quote": "Zitat",
+    "hr": "Horizontale Linie"
+  },
+  "stats": {
+    "words": "Wörter",
+    "characters": "Zeichen",
+    "lines": "Zeilen",
+    "readingTime": "Min. Lesezeit"
+  },
+  "search": {
+    "placeholder": "Im Dokument suchen...",
+    "previous": "Vorheriger Treffer",
+    "next": "Nächster Treffer",
+    "close": "Suche schließen",
+    "noResults": "Keine Treffer",
+    "of": "von"
+  },
+  "export": {
+    "title": "Exportieren",
+    "html": "Eigenständiges HTML exportieren",
+    "pdf": "Drucken / PDF"
   }
 }

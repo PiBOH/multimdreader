@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Lector y Editor Markdown Multiplataforma",
-    "version": "0.1.1_RC1"
+    "version": "0.1.2_RC2"
   },
   "header": {
     "openFile": "Abrir Archivo",
@@ -77,6 +77,42 @@
     "saveFile": "Guardar archivo",
     "toggleSidebar": "Barra lateral",
     "toggleDark": "Tema oscuro/claro",
-    "close": "Cerrar ventana"
+    "close": "Cerrar ventana",
+    "find": "Buscar en el documento",
+    "export": "Exportar documento"
+  },
+  "toolbar": {
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "strikethrough": "Tachado",
+    "heading1": "Encabezado 1",
+    "heading2": "Encabezado 2",
+    "heading3": "Encabezado 3",
+    "code": "Bloque de código",
+    "inlineCode": "Código en línea",
+    "link": "Enlace",
+    "table": "Tabla",
+    "checkbox": "Lista de tareas",
+    "quote": "Cita",
+    "hr": "Línea horizontal"
+  },
+  "stats": {
+    "words": "palabras",
+    "characters": "caracteres",
+    "lines": "líneas",
+    "readingTime": "min lectura"
+  },
+  "search": {
+    "placeholder": "Buscar en el documento...",
+    "previous": "Coincidencia anterior",
+    "next": "Siguiente coincidencia",
+    "close": "Cerrar búsqueda",
+    "noResults": "Sin resultados",
+    "of": "de"
+  },
+  "export": {
+    "title": "Exportar",
+    "html": "Exportar HTML independiente",
+    "pdf": "Imprimir / PDF"
   }
 }

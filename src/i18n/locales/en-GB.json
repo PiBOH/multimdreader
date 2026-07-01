@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Cross-Platform Markdown Reader & Editor",
-    "version": "0.1.1_RC1"
+    "version": "0.1.2_RC2"
   },
   "header": {
     "openFile": "Open File",
@@ -77,6 +77,42 @@
     "saveFile": "Save file",
     "toggleSidebar": "Toggle sidebar",
     "toggleDark": "Toggle theme",
-    "close": "Close dialog"
+    "close": "Close dialog",
+    "find": "Find in document",
+    "export": "Export document"
+  },
+  "toolbar": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "strikethrough": "Strikethrough",
+    "heading1": "Heading 1",
+    "heading2": "Heading 2",
+    "heading3": "Heading 3",
+    "code": "Code block",
+    "inlineCode": "Inline code",
+    "link": "Link",
+    "table": "Table",
+    "checkbox": "Task list",
+    "quote": "Blockquote",
+    "hr": "Horizontal rule"
+  },
+  "stats": {
+    "words": "words",
+    "characters": "characters",
+    "lines": "lines",
+    "readingTime": "min read"
+  },
+  "search": {
+    "placeholder": "Search in document...",
+    "previous": "Previous match",
+    "next": "Next match",
+    "close": "Close search",
+    "noResults": "No results",
+    "of": "of"
+  },
+  "export": {
+    "title": "Export",
+    "html": "Export standalone HTML",
+    "pdf": "Print / PDF"
   }
 }
