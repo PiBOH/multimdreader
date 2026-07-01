@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1_RC1] — 2026-07-01
+
+### ✨ UX & Markdown Rendering Perfection
+
+- **Always-Visible Read/Edit Toggle**: Removed the conditional check on the header toggle switch so that `READ (toggle) EDIT` is always visible. Switching to Edit mode from the welcome screen instantly initializes a clean `Untitled.md` editing workspace.
+- **Reference Link vs Explicit Link Precision**: Configured `react-markdown` AST component overrides (`node.type === 'linkReference'`) to ensure that shortcut text enclosed in square brackets (e.g., `[TEXT]`) is rendered cleanly as plain text, while explicit inline links (e.g., `[TEXT](URL)`) are properly rendered as clickable anchor tags (`<a>`).
+- **Raw HTML Rendering**: Integrated `rehype-raw` into the parser pipeline to correctly decode and render raw HTML elements, such as aligned wrapper divs (`<div align="center">`) and embedded badge images commonly found at the top of professional README files.
+- **Version Updates**: Updated all version references to `0.1.1_RC1`.
+
+---
+
 ## [0.1.0_BETA] — 2026-07-01
 
 ### ✨ Major Feature: Markdown Editor Mode
@@ -224,6 +235,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.1.1_RC1]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC1
 [0.1.0_BETA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.0_BETA
 [0.0.8_BETA5]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA5
 [0.0.8_BETA4]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA4

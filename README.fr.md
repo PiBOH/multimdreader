@@ -7,11 +7,11 @@
 
 </div>
 
-**Version 0.1.0_BETA** · Auteur : [PiBOH](https://piboh.github.io/)
+**Version 0.1.1_RC1** · Auteur : [PiBOH](https://piboh.github.io/)
 
 > 🔤 Un lecteur de fichiers Markdown multiplateforme. Aucune installation requise — téléchargez et lancez.
 
-[![Build Web](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/build.yml) [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
+[![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
 
 🌐 Lire en : [🇮🇹 Italiano](README.it.md) · [🇬🇧 English (UK)](README.en-GB.md) · [🇺🇸 English (US)](README.md) · [🇪🇸 Español](README.es.md) · [🇩🇪 Deutsch](README.de.md) · 🇫🇷 Français
 
@@ -92,10 +92,6 @@ npx tauri icon public/icon.png
 
 ## 🏗️ Workflows CI/CD
 
-### Workflow de Build (`.github/workflows/build.yml`)
-
-S'exécute à chaque push/PR sur `main` — compile l'application web pour vérifier qu'elle se compile correctement.
-
 ### Workflows de Release (par OS)
 
 Chaque workflow s'exécute lors du push d'un tag (`v*`) — compile les applications bureau pour la plateforme spécifique :
@@ -141,4 +137,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Dépôt** : [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Auteur** : [PiBOH](https://piboh.github.io/)  
-**Version** : 0.1.0_BETA
+**Version** : 0.1.1_RC1

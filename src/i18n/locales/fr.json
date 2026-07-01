@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Lecteur et Éditeur Markdown Multiplateforme",
-    "version": "0.1.0_BETA"
+    "version": "0.1.1_RC1"
   },
   "header": {
     "openFile": "Ouvrir Fichier",

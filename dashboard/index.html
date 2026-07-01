@@ -193,6 +193,13 @@
     <p>Fetched live from the repository — always up to date.</p>
     <div id="changelog-content">
       <article>
+        <h3>[0.1.1_RC1]</h3>
+        <ul>
+          <li>Always-Visible Read/Edit Toggle: Switching to Edit mode from welcome screen initializes a clean `Untitled.md` workspace</li>
+          <li>Reference Link vs Explicit Link Precision: `[TEXT]` renders as plain text, `[TEXT](URL)` renders as clickable link</li>
+          <li>Raw HTML Rendering: Added `rehype-raw` to correctly decode `<div align="center">` and badge images in READMEs</li>
+          <li>Updated all version references to <code>0.1.1_RC1</code></li>
+        </ul>
         <h3>[0.1.0_BETA]</h3>
         <ul>
           <li>Major Feature: Markdown Editor Mode with side-by-side live preview</li>
@@ -288,7 +295,6 @@
         <h3>Source</h3>
         <pre><code>multimdreader/
 ├── .github/workflows/
-│   ├── build.yml
 │   ├── deploy-pages-demo.yml
 │   ├── deploy-pages-dashboard.yml
 │   ├── release-windows.yml

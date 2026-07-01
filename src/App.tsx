@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github-dark.css';
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
@@ -10,7 +11,7 @@ import { listen } from '@tauri-apps/api/event';
 import appIcon from './icon.png';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.1.0_BETA';
+const APP_VERSION = '0.1.1_RC1';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
@@ -299,7 +300,7 @@ export default function App() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = currentFileName || 'document.md';
+      a.download = currentFileName || 'Untitled.md';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -586,26 +587,34 @@ export default function App() {
           </div>
         )}
 
-        {/* Read / Edit Mode Sliding Toggle */}
-        {currentContent !== '' && (
-          <div className="flex items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300 shadow-inner my-auto">
-            <span className={!isEditMode ? 'text-blue-600 dark:text-blue-400 font-bold' : ''}>{t('header.readMode', 'READ')}</span>
-            <button
-              onClick={() => setIsEditMode(prev => !prev)}
-              className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                isEditMode ? 'bg-purple-600' : 'bg-blue-500'
+        {/* Read / Edit Mode Sliding Toggle (ALWAYS VISIBLE) */}
+        <div className="flex items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300 shadow-inner my-auto">
+          <span className={!isEditMode ? 'text-blue-600 dark:text-blue-400 font-bold' : ''}>{t('header.readMode', 'READ')}</span>
+          <button
+            onClick={() => {
+              setIsEditMode(prev => {
+                const nextMode = !prev;
+                // If toggling to EDIT mode when no file is open, initialize an untitled document
+                if (nextMode && !currentFileName) {
+                  setCurrentFileName('Untitled.md');
+                  setCurrentFileModified(Date.now());
+                }
+                return nextMode;
+              });
+            }}
+            className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              isEditMode ? 'bg-purple-600' : 'bg-blue-500'
+            }`}
+            title={isEditMode ? t('header.switchToRead', 'Switch to Read mode') : t('header.switchToEdit', 'Switch to Edit mode')}
+          >
+            <span
+              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                isEditMode ? 'translate-x-5' : 'translate-x-0'
               }`}
-              title={isEditMode ? t('header.switchToRead', 'Switch to Read mode') : t('header.switchToEdit', 'Switch to Edit mode')}
-            >
-              <span
-                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                  isEditMode ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
-            </button>
-            <span className={isEditMode ? 'text-purple-600 dark:text-purple-400 font-bold' : ''}>{t('header.editMode', 'EDIT')}</span>
-          </div>
-        )}
+            />
+          </button>
+          <span className={isEditMode ? 'text-purple-600 dark:text-purple-400 font-bold' : ''}>{t('header.editMode', 'EDIT')}</span>
+        </div>
 
         {/* Language Selector */}
         <div className="relative" ref={langDropdownRef}>
@@ -803,8 +812,15 @@ export default function App() {
                         <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0">
                           <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
-                            rehypePlugins={[rehypeHighlight]}
+                            rehypePlugins={[rehypeRaw, rehypeHighlight]}
                             components={{
+                              a({ node, children, href, ...props }: any) {
+                                // Prevent shortcut reference links like [TEXT] from turning into links
+                                if (node?.type === 'linkReference') {
+                                  return <span className="font-semibold text-inherit">[{children}]</span>;
+                                }
+                                return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+                              },
                               code({ className, children, ...props }) {
                                 const isInline = !className;
                                 if (isInline) {
@@ -834,8 +850,15 @@ export default function App() {
                     <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0 mx-auto">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[rehypeHighlight]}
+                        rehypePlugins={[rehypeRaw, rehypeHighlight]}
                         components={{
+                          a({ node, children, href, ...props }: any) {
+                            // Prevent shortcut reference links like [TEXT] from turning into links
+                            if (node?.type === 'linkReference') {
+                              return <span className="font-semibold text-inherit">[{children}]</span>;
+                            }
+                            return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+                          },
                           code({ className, children, ...props }) {
                             const isInline = !className;
                             if (isInline) {
