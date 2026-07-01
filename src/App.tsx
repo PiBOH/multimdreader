@@ -15,7 +15,7 @@ import { SearchBar } from './components/SearchBar';
 import { ExportMenu } from './components/ExportMenu';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.1.2_RC2';
+const APP_VERSION = '0.1.1_RC3';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
@@ -179,6 +179,14 @@ function IconSave() {
   );
 }
 
+function IconImage() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
 // ─── Code Block Component with Copy Button ────────────────────────
 function CodeBlock({ children, className, ...props }: {
   children: ReactNode;
@@ -245,7 +253,8 @@ export default function App() {
       return [];
     }
   });
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false); // Closed by default
+  const [renderImages, setRenderImages] = useState<boolean>(true); // DEFAULT ACTIVE
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     const stored = localStorage.getItem('multimdreader-theme');
     if (stored) return stored === 'dark';
@@ -615,6 +624,19 @@ export default function App() {
           className="hidden"
         />
 
+        {/* Render Images Toggle */}
+        <button
+          onClick={() => setRenderImages(prev => !prev)}
+          className={`p-2 rounded-lg transition-colors flex items-center gap-1 text-xs font-medium ${
+            renderImages
+              ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50'
+              : 'text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'
+          }`}
+          title={t('header.toggleImages', 'Toggle images rendering')}
+        >
+          <IconImage />
+        </button>
+
         {/* Spacer */}
         <div className="flex-1" />
 
@@ -894,6 +916,12 @@ export default function App() {
                                 }
                                 return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
                               },
+                              img({ src, alt, ...props }: any) {
+                                if (!renderImages) {
+                                  return <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-xs text-gray-500 dark:text-gray-400 rounded border border-gray-200 dark:border-gray-700 font-mono my-1" title={src}>🖼️ [Image: {alt || 'untitled'}]</span>;
+                                }
+                                return <img src={src} alt={alt} {...props} />;
+                              },
                               code({ className, children, ...props }) {
                                 const isInline = !className;
                                 if (isInline) {
@@ -931,6 +959,12 @@ export default function App() {
                               return <span className="font-semibold text-inherit">[{children}]</span>;
                             }
                             return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+                          },
+                          img({ src, alt, ...props }: any) {
+                            if (!renderImages) {
+                              return <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-xs text-gray-500 dark:text-gray-400 rounded border border-gray-200 dark:border-gray-700 font-mono my-1" title={src}>🖼️ [Image: {alt || 'untitled'}]</span>;
+                            }
+                            return <img src={src} alt={alt} {...props} />;
                           },
                           code({ className, children, ...props }) {
                             const isInline = !className;
@@ -1009,6 +1043,20 @@ export default function App() {
                   GitHub
                 </a>
               </div>
+
+              {/* Documentation Section */}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('about.documentation', '📚 Documentation (README)')}</h4>
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.it.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇮🇹 Italiano</a>
+                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.en-GB.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇬🇧 English (UK)</a>
+                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇺🇸 English (US)</a>
+                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.es.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇪🇸 Español</a>
+                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.fr.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇫🇷 Français</a>
+                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.de.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇩🇪 Deutsch</a>
+                </div>
+              </div>
+
               <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                   {t('about.description')}

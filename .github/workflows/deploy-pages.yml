@@ -7,7 +7,6 @@ on:
       - '**.md'
       - 'docs/**'
       - '.github/workflows/release-*.yml'
-      - '.github/workflows/build.yml'
       - 'src-tauri/**'
       - 'PKGBUILD'
   workflow_dispatch:

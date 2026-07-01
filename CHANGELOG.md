@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.1.2_RC2] — 2026-07-01
+## [0.1.1_RC3] — 2026-07-01
+
+### ✨ UX, Clean Reading & Rendering Perfection
+
+- **Image Rendering Toggle**: Added a dedicated button in the header (`IconImage`) to toggle the rendering of images on/off (active by default). When disabled, images are replaced with a clean, space-saving plain text badge (`🖼️ [Image: alt]`), perfect for reading heavy or cluttered Markdown documents.
+- **Sidebar Closed by Default**: Changed the initial state of the recent files sidebar to be closed by default (`sidebarOpen = false`), offering an immediate distraction-free reading space upon startup.
+- **Bilingual Documentation Shortcuts**: Added a beautiful `📚 Documentation (README)` section directly within the About dialog, providing instant links to open the project's official README on GitHub in any of the 6 supported languages (`it`, `en-GB`, `en-US`, `es`, `fr`, `de`).
+- **Version Updates**: Updated all version references to `0.1.1_RC3`.
+
+---
+
+## [0.1.1_RC2] — 2026-07-01
 
 ### ✨ Advanced Editor Suite & Productivity Enhancements
 
@@ -250,6 +261,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.1.1_RC3]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC3
+[0.1.1_RC2]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC2
 [0.1.1_RC1]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC1
 [0.1.0_BETA]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.0_BETA
 [0.0.8_BETA5]: https://github.com/PiBOH/multimdreader/releases/tag/v0.0.8_BETA5
