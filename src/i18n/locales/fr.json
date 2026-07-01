@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Lecteur et Éditeur Markdown Multiplateforme",
-    "version": "0.1.1_RC4"
+    "version": "0.1.1_STABLE5"
   },
   "header": {
     "openFile": "Ouvrir Fichier",
@@ -33,6 +33,7 @@
     "author": "Auteur",
     "website": "Site Web",
     "repository": "Dépôt",
+    "documentation": "Documentation Intégrée",
     "description": "Un lecteur et éditeur de fichiers Markdown multiplateforme, prêt à l'emploi sans installation. Disponible pour Windows, macOS et Linux.",
     "close": "Fermer"
   },
@@ -51,7 +52,10 @@
     "editorTab": "Éditeur Markdown",
     "previewTab": "Aperçu en direct",
     "unsaved": "non enregistré",
-    "placeholder": "Écrivez votre markdown ici..."
+    "placeholder": "Écrivez votre markdown ici...",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "resetAll": "Tout réinitialiser"
   },
   "theme": {
     "light": "Clair",
@@ -78,8 +82,10 @@
     "toggleSidebar": "Barre latérale",
     "toggleDark": "Thème sombre/clair",
     "close": "Fermer la fenêtre",
-    "find": "Rechercher dans le document",
-    "export": "Exporter le document"
+    "find": "Rechercher",
+    "export": "Exporter le document",
+    "undo": "Annuler",
+    "redo": "Rétablir"
   },
   "toolbar": {
     "bold": "Gras",
@@ -100,12 +106,12 @@
     "words": "mots",
     "characters": "caractères",
     "lines": "lignes",
-    "readingTime": "min lecture"
+    "readingTime": "min de lecture"
   },
   "search": {
     "placeholder": "Rechercher dans le document...",
-    "previous": "Correspondance précédente",
-    "next": "Correspondance suivante",
+    "previous": "Occurrence précédente",
+    "next": "Occurrence suivante",
     "close": "Fermer la recherche",
     "noResults": "Aucun résultat",
     "of": "sur"

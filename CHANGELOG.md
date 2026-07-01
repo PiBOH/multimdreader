@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1_STABLE5] — 2026-07-01
+
+### ✨ Ultimate AST Parsing Control & Complete Localization
+
+- **Remark AST Explicit Links Enforcement (`remarkExplicitLinksOnly`)**: Implemented a custom `remark` AST plugin that actively traverses the syntax tree and intercepts `linkReference` nodes (`[text]`) before HTML/hast conversion, transforming them into pure plain text nodes (`[text]`). This permanently guarantees that only explicit inline links (`[text](url)`) are rendered as clickable HTML anchor tags (`<a>`), resolving a major underlying limitation of standard Markdown parsers.
+- **Complete History Controls Localization**: Symmetrically added full translations for `Annulla` (`Undo`), `Ripeti` (`Redo`), and `Annulla tutto` (`Reset all`) across all 6 supported language JSON files (`it`, `en-GB`, `en-US`, `es`, `fr`, `de`).
+- **Comprehensive README Optimization**: Verified and reinforced across all 6 language README files that the tagline and features explicitly designate the application as a **Cross-Platform Markdown Reader & Advanced Editor**.
+- **Global Version Update**: Updated all version constants to `0.1.1_STABLE5`.
+
+---
+
 ## [0.1.1_RC4] — 2026-07-01
 
 ### ✨ Masterclass UI Diagnostics & Advanced History Controls
@@ -16,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Download Reliability Statement**: Added an explicit disclaimer in the dashboard download section guaranteeing that all asset links strictly point to the latest verified stable release (`0.0.7_STABLE`).
 - **Advanced Editing History (Undo/Redo/Reset)**: In Edit mode, added fully responsive action buttons in the editor tab bar for `↩️ Annulla` (`Ctrl+Z`), `↪️ Ripeti` (`Ctrl+Y`), and `🔄 Annulla tutto`, powered by dedicated undo/redo history state stacks in React.
 - **Keyboard Shortcuts Expansion**: Updated the keyboard shortcuts overview in the app sidebar and all 6 language READMEs to include Save (`Ctrl+S`), Find (`Ctrl+F`), Undo (`Ctrl+Z`), and Redo (`Ctrl+Y`).
-- **Global Version Alignment**: Cleaned up all leftover version strings across READMEs and manifests to `0.1.1_RC4`.
+- **Global Version Alignment**: Cleaned up all leftover version strings across READMEs and manifests to `0.1.1_STABLE5`.
 
 ---
 
@@ -46,14 +57,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.1.1_RC4] — 2026-07-01
+## [0.1.1_STABLE5] — 2026-07-01
 
 ### ✨ UX & Markdown Rendering Perfection
 
 - **Always-Visible Read/Edit Toggle**: Removed the conditional check on the header toggle switch so that `READ (toggle) EDIT` is always visible. Switching to Edit mode from the welcome screen instantly initializes a clean `Untitled.md` editing workspace.
 - **Reference Link vs Explicit Link Precision**: Configured `react-markdown` AST component overrides (`node.type === 'linkReference'`) to ensure that shortcut text enclosed in square brackets (e.g., `[TEXT]`) is rendered cleanly as plain text, while explicit inline links (e.g., `[TEXT](URL)`) are properly rendered as clickable anchor tags (`<a>`).
 - **Raw HTML Rendering**: Integrated `rehype-raw` into the parser pipeline to correctly decode and render raw HTML elements, such as aligned wrapper divs (`<div align="center">`) and embedded badge images commonly found at the top of professional README files.
-- **Version Updates**: Updated all version references to `0.1.1_RC4`.
+- **Version Updates**: Updated all version references to `0.1.1_STABLE5`.
 
 ---
 
@@ -274,6 +285,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.1.1_STABLE5]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_STABLE5
 [0.1.1_RC4]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC4
 [0.1.1_RC3]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC3
 [0.1.1_RC2]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC2

@@ -7,9 +7,9 @@
 
 </div>
 
-**Versión 0.1.1_RC4** · Autor: [PiBOH](https://piboh.github.io/)
+**Versión 0.1.1_STABLE5** · Autor: [PiBOH](https://piboh.github.io/)
 
-> 🔤 Un lector de archivos Markdown multiplataforma. No requiere instalación — solo descarga y ejecuta.
+> 🔤 Un lector y editor avanzado de archivos Markdown multiplataforma. No requiere instalación — solo descarga y ejecuta.
 
 [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
 
@@ -17,6 +17,7 @@
 
 ## ✨ Características
 
+* ✏️ **Modo Editor Avanzado**: Visualización lado a lado con vista previa en vivo, barra de herramientas interactiva, búsqueda en el documento (`Ctrl+F`), estadísticas en tiempo real, historial Deshacer/Rehacer (`Ctrl+Z`/`Ctrl+Y`), y exportación a HTML independiente o PDF.
 * 📖 **Lee archivos Markdown** con un renderizado elegante al estilo GitHub
 * 🎨 **Resaltado de sintaxis** para bloques de código (100+ lenguajes)
 * 🌐 **6 idiomas soportados**: 🇮🇹 Italiano, 🇬🇧 English (UK), 🇺🇸 English (US), 🇪🇸 Español, 🇩🇪 Deutsch, 🇫🇷 Français
@@ -141,4 +142,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Repositorio**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Autor**: [PiBOH](https://piboh.github.io/)  
-**Versión**: 0.1.1_RC4
+**Versión**: 0.1.1_STABLE5

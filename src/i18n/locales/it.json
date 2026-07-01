@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Lettore ed Editor Markdown Multipiattaforma",
-    "version": "0.1.1_RC4"
+    "version": "0.1.1_STABLE5"
   },
   "header": {
     "openFile": "Apri File",
@@ -33,6 +33,7 @@
     "author": "Autore",
     "website": "Sito Web",
     "repository": "Repository",
+    "documentation": "Documentazione Integrata",
     "description": "Un lettore ed editor di file Markdown multipiattaforma, pronto all'uso senza installazione. Disponibile per Windows, macOS e Linux.",
     "close": "Chiudi"
   },
@@ -51,7 +52,10 @@
     "editorTab": "Markdown Editor",
     "previewTab": "Anteprima dal vivo",
     "unsaved": "non salvato",
-    "placeholder": "Scrivi il tuo markdown qui..."
+    "placeholder": "Scrivi il tuo markdown qui...",
+    "undo": "Annulla",
+    "redo": "Ripeti",
+    "resetAll": "Annulla tutto"
   },
   "theme": {
     "light": "Chiaro",
@@ -79,7 +83,9 @@
     "toggleDark": "Tema scuro/chiaro",
     "close": "Chiudi finestra",
     "find": "Cerca nel documento",
-    "export": "Esporta documento"
+    "export": "Esporta documento",
+    "undo": "Annulla",
+    "redo": "Ripeti"
   },
   "toolbar": {
     "bold": "Grassetto",

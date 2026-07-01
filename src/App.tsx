@@ -13,9 +13,26 @@ import { EditorToolbar } from './components/EditorToolbar';
 import { DocumentStats } from './components/DocumentStats';
 import { SearchBar } from './components/SearchBar';
 import { ExportMenu } from './components/ExportMenu';
+import { visit } from 'unist-util-visit';
+
+// Custom remark plugin to strictly enforce explicit inline links [text](url)
+// Shortcut reference links like [text] are converted to plain text before HTML conversion
+function remarkExplicitLinksOnly() {
+  return (tree: any) => {
+    visit(tree, 'linkReference', (node: any, index: any, parent: any) => {
+      const textContent = node.children.map((c: any) => c.value || '').join('');
+      if (parent && typeof index === 'number') {
+        parent.children[index] = {
+          type: 'text',
+          value: `[${textContent}]`
+        };
+      }
+    });
+  };
+}
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.1.1_RC4';
+const APP_VERSION = '0.1.1_STABLE5';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
@@ -257,7 +274,13 @@ export default function App() {
       return [];
     }
   });
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false); // Closed by default
+
+  // Sidebar persistence (remembers last state, defaults to open)
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
+    const stored = localStorage.getItem('multimdreader-sidebar-open');
+    return stored ? stored === 'true' : true;
+  });
+
   const [renderImages, setRenderImages] = useState<boolean>(true); // DEFAULT ACTIVE
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     const stored = localStorage.getItem('multimdreader-theme');
@@ -314,6 +337,11 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('multimdreader-recent-files', JSON.stringify(recentFiles));
   }, [recentFiles]);
+
+  // Persist sidebar state
+  useEffect(() => {
+    localStorage.setItem('multimdreader-sidebar-open', String(sidebarOpen));
+  }, [sidebarOpen]);
 
   // Close lang dropdown on outside click
   useEffect(() => {
@@ -1018,7 +1046,7 @@ export default function App() {
                       <div ref={previewRef} onScroll={handlePreviewScroll} className="flex-1 overflow-y-auto px-6 py-6">
                         <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0">
                           <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
+                            remarkPlugins={[remarkGfm, remarkExplicitLinksOnly]}
                             rehypePlugins={[rehypeRaw, rehypeHighlight]}
                             components={{
                               a({ node, children, href, ...props }: any) {
@@ -1061,7 +1089,7 @@ export default function App() {
                   <div ref={previewRef} className="flex-1 overflow-y-auto px-6 py-8 w-full">
                     <article className="prose prose-gray dark:prose-invert max-w-none prose-headings:scroll-mt-4 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:p-0 mx-auto">
                       <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
+                        remarkPlugins={[remarkGfm, remarkExplicitLinksOnly]}
                         rehypePlugins={[rehypeRaw, rehypeHighlight]}
                         components={{
                           a({ node, children, href, ...props }: any) {
@@ -1154,47 +1182,65 @@ export default function App() {
                   Click any language to load and read the official README or Changelog directly within the application.
                 </p>
                 <div className="grid grid-cols-2 gap-3 mb-6">
-                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.it.md', 'README.it.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
-                    <span className="text-2xl">🇮🇹</span>
-                    <div>
-                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Italiano</div>
-                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.it.md</div>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.it.md', 'README.it.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center justify-between shadow-sm hover:shadow">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">🇮🇹</span>
+                      <div>
+                        <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Italiano</div>
+                        <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.it.md</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded">Live</span>
                   </button>
-                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.en-GB.md', 'README.en-GB.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
-                    <span className="text-2xl">🇬🇧</span>
-                    <div>
-                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">English (UK)</div>
-                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.en-GB.md</div>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.en-GB.md', 'README.en-GB.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center justify-between shadow-sm hover:shadow">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">🇬🇧</span>
+                      <div>
+                        <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">English (UK)</div>
+                        <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.en-GB.md</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded">Live</span>
                   </button>
-                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.md', 'README.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
-                    <span className="text-2xl">🇺🇸</span>
-                    <div>
-                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">English (US)</div>
-                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.md</div>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.md', 'README.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center justify-between shadow-sm hover:shadow">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">🇺🇸</span>
+                      <div>
+                        <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">English (US)</div>
+                        <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.md</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded">Live</span>
                   </button>
-                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.es.md', 'README.es.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
-                    <span className="text-2xl">🇪🇸</span>
-                    <div>
-                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Español</div>
-                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.es.md</div>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.es.md', 'README.es.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center justify-between shadow-sm hover:shadow">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">🇪🇸</span>
+                      <div>
+                        <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Español</div>
+                        <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.es.md</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded">Live</span>
                   </button>
-                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.fr.md', 'README.fr.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
-                    <span className="text-2xl">🇫🇷</span>
-                    <div>
-                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Français</div>
-                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.fr.md</div>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.fr.md', 'README.fr.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center justify-between shadow-sm hover:shadow">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">🇫🇷</span>
+                      <div>
+                        <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Français</div>
+                        <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.fr.md</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded">Live</span>
                   </button>
-                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.de.md', 'README.de.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
-                    <span className="text-2xl">🇩🇪</span>
-                    <div>
-                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Deutsch</div>
-                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.de.md</div>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.de.md', 'README.de.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center justify-between shadow-sm hover:shadow">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">🇩🇪</span>
+                      <div>
+                        <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Deutsch</div>
+                        <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.de.md</div>
+                      </div>
                     </div>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded">Live</span>
                   </button>
                 </div>
 

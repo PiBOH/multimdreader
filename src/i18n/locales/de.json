@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Plattformübergreifender Markdown-Reader & Editor",
-    "version": "0.1.1_RC4"
+    "version": "0.1.1_STABLE5"
   },
   "header": {
     "openFile": "Datei öffnen",
@@ -33,7 +33,8 @@
     "author": "Autor",
     "website": "Webseite",
     "repository": "Repository",
-    "description": "Ein plattformübergreifender Markdown-Reader und Editor, ohne Installation direkt einsatzbereit. Verfügbar für Windows, macOS und Linux.",
+    "documentation": "Integrierte Dokumentation",
+    "description": "Ein plattformübergreifender Markdown-Reader und erweiterter Editor, ohne Installation direkt einsatzbereit. Verfügbar für Windows, macOS und Linux.",
     "close": "Schließen"
   },
   "reader": {
@@ -51,7 +52,10 @@
     "editorTab": "Markdown Editor",
     "previewTab": "Live-Vorschau",
     "unsaved": "ungespeichert",
-    "placeholder": "Schreiben Sie Ihr Markdown hier..."
+    "placeholder": "Schreiben Sie Ihr Markdown hier...",
+    "undo": "Rückgängig",
+    "redo": "Wiederholen",
+    "resetAll": "Alles zurücksetzen"
   },
   "theme": {
     "light": "Hell",
@@ -79,7 +83,9 @@
     "toggleDark": "Dunkles/Helles Design",
     "close": "Fenster schließen",
     "find": "Im Dokument suchen",
-    "export": "Dokument exportieren"
+    "export": "Dokument exportieren",
+    "undo": "Rückgängig",
+    "redo": "Wiederholen"
   },
   "toolbar": {
     "bold": "Fett",
@@ -88,11 +94,11 @@
     "heading1": "Überschrift 1",
     "heading2": "Überschrift 2",
     "heading3": "Überschrift 3",
-    "code": "Codeblock",
+    "code": "Code-Block",
     "inlineCode": "Inline-Code",
     "link": "Link",
     "table": "Tabelle",
-    "checkbox": "Checkliste",
+    "checkbox": "Aufgabenliste",
     "quote": "Zitat",
     "hr": "Horizontale Linie"
   },
@@ -107,12 +113,12 @@
     "previous": "Vorheriger Treffer",
     "next": "Nächster Treffer",
     "close": "Suche schließen",
-    "noResults": "Keine Treffer",
+    "noResults": "Keine Ergebnisse",
     "of": "von"
   },
   "export": {
     "title": "Exportieren",
-    "html": "Eigenständiges HTML exportieren",
+    "html": "Standalone HTML exportieren",
     "pdf": "Drucken / PDF"
   }
 }

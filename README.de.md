@@ -7,9 +7,9 @@
 
 </div>
 
-**Version 0.1.1_RC4** · Autor: [PiBOH](https://piboh.github.io/)
+**Version 0.1.1_STABLE5** · Autor: [PiBOH](https://piboh.github.io/)
 
-> 🔤 Ein plattformübergreifender Markdown-Dateireader. Keine Installation erforderlich — einfach herunterladen und starten.
+> 🔤 Ein plattformübergreifender Markdown-Dateireader und erweiterter Editor. Keine Installation erforderlich — einfach herunterladen und starten.
 
 [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
 
@@ -17,6 +17,7 @@
 
 ## ✨ Funktionen
 
+* ✏️ **Erweiterter Editor-Modus**: Side-by-Side-Bearbeitung mit Live-Vorschau, interaktiver Formatierungssymbolleiste, Dokumentsuche (`Strg+F`), Echtzeit-Statistiken, Rückgängig-/Wiederholen-Verlauf (`Strg+Z`/`Strg+Y`) und Standalone HTML-/PDF-Export.
 * 📖 **Markdown-Dateien lesen** mit schönem, GitHub-artigem Rendering
 * 🎨 **Syntax-Hervorhebung** für Code-Blöcke (100+ Sprachen)
 * 🌐 **6 Sprachen unterstützt**: 🇮🇹 Italiano, 🇬🇧 English (UK), 🇺🇸 English (US), 🇪🇸 Español, 🇩🇪 Deutsch, 🇫🇷 Français
@@ -141,4 +142,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Autor**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.1.1_RC4
+**Version**: 0.1.1_STABLE5

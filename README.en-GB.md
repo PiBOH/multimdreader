@@ -7,9 +7,9 @@
 
 </div>
 
-**Version 0.1.1_RC4** · Author: [PiBOH](https://piboh.github.io/)
+**Version 0.1.1_STABLE5** · Author: [PiBOH](https://piboh.github.io/)
 
-> 🔤 A cross-platform Markdown file reader. No installation required — just download and run.
+> 🔤 A cross-platform Markdown file reader and advanced editor. No installation required — just download and run.
 
 [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
 
@@ -17,6 +17,7 @@
 
 ## ✨ Features
 
+* ✏️ **Advanced Editor Mode**: Full side-by-side editing with live preview, interactive formatting toolbar, document search (`Ctrl+F`), real-time document statistics, Undo/Redo history stacks (`Ctrl+Z`/`Ctrl+Y`), and standalone HTML/PDF export.
 * 📖 **Read Markdown files** with beautiful, GitHub-style rendering
 * 🎨 **Syntax highlighting** for code blocks (100+ languages)
 * 🌐 **6 languages supported**: 🇮🇹 Italiano, 🇬🇧 English (UK), 🇺🇸 English (US), 🇪🇸 Español, 🇩🇪 Deutsch, 🇫🇷 Français
@@ -141,4 +142,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Author**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.1.1_RC4
+**Version**: 0.1.1_STABLE5

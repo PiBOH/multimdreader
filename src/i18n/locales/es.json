@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Lector y Editor Markdown Multiplataforma",
-    "version": "0.1.1_RC4"
+    "version": "0.1.1_STABLE5"
   },
   "header": {
     "openFile": "Abrir Archivo",
@@ -33,6 +33,7 @@
     "author": "Autor",
     "website": "Sitio Web",
     "repository": "Repositorio",
+    "documentation": "Documentación Integrada",
     "description": "Un lector y editor de archivos Markdown multiplataforma, listo para usar sin instalación. Disponible para Windows, macOS y Linux.",
     "close": "Cerrar"
   },
@@ -51,7 +52,10 @@
     "editorTab": "Editor Markdown",
     "previewTab": "Vista Previa",
     "unsaved": "sin guardar",
-    "placeholder": "Escribe tu markdown aquí..."
+    "placeholder": "Escribe tu markdown aquí...",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "resetAll": "Restablecer todo"
   },
   "theme": {
     "light": "Claro",
@@ -79,15 +83,17 @@
     "toggleDark": "Tema oscuro/claro",
     "close": "Cerrar ventana",
     "find": "Buscar en el documento",
-    "export": "Exportar documento"
+    "export": "Exportar documento",
+    "undo": "Deshacer",
+    "redo": "Rehacer"
   },
   "toolbar": {
     "bold": "Negrita",
     "italic": "Cursiva",
     "strikethrough": "Tachado",
-    "heading1": "Encabezado 1",
-    "heading2": "Encabezado 2",
-    "heading3": "Encabezado 3",
+    "heading1": "Título 1",
+    "heading2": "Título 2",
+    "heading3": "Título 3",
     "code": "Bloque de código",
     "inlineCode": "Código en línea",
     "link": "Enlace",
@@ -105,7 +111,7 @@
   "search": {
     "placeholder": "Buscar en el documento...",
     "previous": "Coincidencia anterior",
-    "next": "Siguiente coincidencia",
+    "next": "Coincidencia siguiente",
     "close": "Cerrar búsqueda",
     "noResults": "Sin resultados",
     "of": "de"

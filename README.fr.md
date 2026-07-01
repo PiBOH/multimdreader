@@ -7,9 +7,9 @@
 
 </div>
 
-**Version 0.1.1_RC4** · Auteur : [PiBOH](https://piboh.github.io/)
+**Version 0.1.1_STABLE5** · Auteur : [PiBOH](https://piboh.github.io/)
 
-> 🔤 Un lecteur de fichiers Markdown multiplateforme. Aucune installation requise — téléchargez et lancez.
+> 🔤 Un lecteur et éditeur avancé de fichiers Markdown multiplateforme. Aucune installation requise — téléchargez et lancez.
 
 [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
 
@@ -17,6 +17,7 @@
 
 ## ✨ Fonctionnalités
 
+* ✏️ **Mode Éditeur Avancé** : Édition côte à côte avec aperçu en direct, barre d'outils interactive, recherche dans le document (`Ctrl+F`), statistiques en temps réel, historique Annuler/Rétablir (`Ctrl+Z`/`Ctrl+Y`), et export HTML autonome ou PDF.
 * 📖 **Lire des fichiers Markdown** avec un rendu élégant de style GitHub
 * 🎨 **Coloration syntaxique** pour les blocs de code (100+ langages)
 * 🌐 **6 langues prises en charge** : 🇮🇹 Italiano, 🇬🇧 English (UK), 🇺🇸 English (US), 🇪🇸 Español, 🇩🇪 Deutsch, 🇫🇷 Français
@@ -141,4 +142,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Dépôt** : [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Auteur** : [PiBOH](https://piboh.github.io/)  
-**Version** : 0.1.1_RC4
+**Version** : 0.1.1_STABLE5

@@ -7,9 +7,9 @@
 
 </div>
 
-**Versione 0.1.1_RC4** · Autore: [PiBOH](https://piboh.github.io/)
+**Versione 0.1.1_STABLE5** · Autore: [PiBOH](https://piboh.github.io/)
 
-> 🔤 Un lettore di file Markdown multipiattaforma. Nessuna installazione richiesta — scarica ed esegui.
+> 🔤 Un lettore ed editor avanzato di file Markdown multipiattaforma. Nessuna installazione richiesta — scarica ed esegui.
 
 [![Release Windows](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-windows.yml) [![Release macOS](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-macos.yml) [![Release Linux](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/release-linux.yml) [![Deploy Pages](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/PiBOH/multimdreader/actions/workflows/deploy-pages.yml)
 
@@ -17,6 +17,7 @@
 
 ## ✨ Funzionalità
 
+* ✏️ **Modalità Editor Avanzato**: Visualizzazione side-by-side con anteprima in tempo reale, barra degli strumenti interattiva, ricerca nel documento (`Ctrl+F`), statistiche dal vivo, cronologia Annulla/Ripeti (`Ctrl+Z`/`Ctrl+Y`) ed esportazione in HTML autonomo o PDF.
 * 📖 **Leggi file Markdown** con rendering elegante in stile GitHub
 * 🎨 **Evidenziazione della sintassi** per blocchi di codice (100+ linguaggi)
 * 🌐 **6 lingue supportate**: 🇮🇹 Italiano, 🇬🇧 English (UK), 🇺🇸 English (US), 🇪🇸 Español, 🇩🇪 Deutsch, 🇫🇷 Français
@@ -141,4 +142,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Autore**: [PiBOH](https://piboh.github.io/)  
-**Versione**: 0.1.1_RC4
+**Versione**: 0.1.1_STABLE5

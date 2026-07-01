@@ -2,7 +2,7 @@
   "app": {
     "name": "MultiMDReader",
     "tagline": "Cross-Platform Markdown Reader & Editor",
-    "version": "0.1.1_RC4"
+    "version": "0.1.1_STABLE5"
   },
   "header": {
     "openFile": "Open File",
@@ -33,7 +33,8 @@
     "author": "Author",
     "website": "Website",
     "repository": "Repository",
-    "description": "A cross-platform Markdown reader and editor, ready to use with no installation required. Available for Windows, macOS, and Linux.",
+    "documentation": "Integrated Documentation",
+    "description": "A cross-platform Markdown reader and advanced editor, ready to use with no installation required. Available for Windows, macOS, and Linux.",
     "close": "Close"
   },
   "reader": {
@@ -51,7 +52,10 @@
     "editorTab": "Markdown Editor",
     "previewTab": "Live Preview",
     "unsaved": "unsaved",
-    "placeholder": "Write your markdown here..."
+    "placeholder": "Write your markdown here...",
+    "undo": "Undo",
+    "redo": "Redo",
+    "resetAll": "Reset all"
   },
   "theme": {
     "light": "Light",
@@ -78,8 +82,10 @@
     "toggleSidebar": "Toggle sidebar",
     "toggleDark": "Toggle theme",
     "close": "Close dialog",
-    "find": "Find in document",
-    "export": "Export document"
+    "find": "Search in document",
+    "export": "Export document",
+    "undo": "Undo",
+    "redo": "Redo"
   },
   "toolbar": {
     "bold": "Bold",
@@ -92,7 +98,7 @@
     "inlineCode": "Inline code",
     "link": "Link",
     "table": "Table",
-    "checkbox": "Task list",
+    "checkbox": "Checklist",
     "quote": "Blockquote",
     "hr": "Horizontal rule"
   },
