@@ -7,7 +7,7 @@
 
 </div>
 
-**Version 0.1.1_RC1** · Author: [PiBOH](https://piboh.github.io/)
+**Version 0.1.1_RC4** · Author: [PiBOH](https://piboh.github.io/)
 
 > 🔤 A cross-platform Markdown file reader. No installation required — just download and run.
 
@@ -125,9 +125,13 @@ Runs on every push to `main` — deploys both the dashboard and demo to GitHub P
 | Shortcut    | Action              |
 |-------------|---------------------|
 | `Ctrl+O`   | Open file           |
+| `Ctrl+S`   | Save file           |
+| `Ctrl+F`   | Find in document    |
 | `Ctrl+B`   | Toggle sidebar      |
 | `Ctrl+D`   | Toggle dark/light   |
-| `Escape`    | Close dialogue      |
+| `Ctrl+Z`   | Undo                |
+| `Ctrl+Y`   | Redo                |
+| `Escape`    | Close dialogue/search |
 
 ## 📝 License
 
@@ -137,4 +141,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Author**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.1.1_RC1
+**Version**: 0.1.1_RC4

@@ -15,7 +15,7 @@ import { SearchBar } from './components/SearchBar';
 import { ExportMenu } from './components/ExportMenu';
 
 // ─── Constants ────────────────────────────────────────────────────
-const APP_VERSION = '0.1.1_RC3';
+const APP_VERSION = '0.1.1_RC4';
 const APP_AUTHOR = 'PiBOH';
 const APP_WEBSITE = 'https://piboh.github.io/';
 const APP_REPO = 'https://github.com/PiBOH/multimdreader';
@@ -204,7 +204,6 @@ function CodeBlock({ children, className, ...props }: {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       }).catch(() => {
-        // Fallback for older browsers
         const range = document.createRange();
         range.selectNodeContents(codeElement);
         const selection = window.getSelection();
@@ -244,6 +243,11 @@ export default function App() {
   const [currentFileModified, setCurrentFileModified] = useState<number>(0);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
+
+  // Undo / Redo / Initial State Stacks
+  const [undoStack, setUndoStack] = useState<string[]>([]);
+  const [redoStack, setRedoStack] = useState<string[]>([]);
+  const [initialContent, setInitialContent] = useState<string>('');
 
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>(() => {
     try {
@@ -322,6 +326,41 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  // Content Change Handler (populates undo stack)
+  const handleContentChange = useCallback((newVal: string) => {
+    setUndoStack(prev => [...prev, currentContent]);
+    setRedoStack([]);
+    setCurrentContent(newVal);
+    setHasUnsavedChanges(newVal !== initialContent);
+  }, [currentContent, initialContent]);
+
+  // Undo / Redo / Reset Handlers
+  const handleUndo = useCallback(() => {
+    if (undoStack.length === 0) return;
+    const previous = undoStack[undoStack.length - 1];
+    setRedoStack(prev => [currentContent, ...prev]);
+    setCurrentContent(previous);
+    setUndoStack(prev => prev.slice(0, prev.length - 1));
+    setHasUnsavedChanges(previous !== initialContent);
+  }, [undoStack, currentContent, initialContent]);
+
+  const handleRedo = useCallback(() => {
+    if (redoStack.length === 0) return;
+    const next = redoStack[0];
+    setUndoStack(prev => [...prev, currentContent]);
+    setCurrentContent(next);
+    setRedoStack(prev => prev.slice(1));
+    setHasUnsavedChanges(next !== initialContent);
+  }, [redoStack, currentContent, initialContent]);
+
+  const handleResetAll = useCallback(() => {
+    if (currentContent === initialContent) return;
+    setUndoStack(prev => [...prev, currentContent]);
+    setRedoStack([]);
+    setCurrentContent(initialContent);
+    setHasUnsavedChanges(false);
+  }, [currentContent, initialContent]);
+
   // Save File Logic (Tauri native save vs Browser download)
   const saveFile = useCallback(async () => {
     if (!currentContent && !currentFileName) return;
@@ -329,6 +368,7 @@ export default function App() {
       try {
         await invoke('save_file_content', { path: currentFilePath, content: currentContent });
         setHasUnsavedChanges(false);
+        setInitialContent(currentContent);
         setCurrentFileModified(Date.now());
       } catch (err) {
         console.error('Save error:', err);
@@ -347,17 +387,28 @@ export default function App() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       setHasUnsavedChanges(false);
+      setInitialContent(currentContent);
       setCurrentFileModified(Date.now());
     }
   }, [currentContent, currentFileName, currentFilePath, t]);
 
-  // Keyboard shortcuts (including Ctrl+S for Save)
+  // Keyboard shortcuts (including Ctrl+S, Ctrl+Z, Ctrl+Y)
   useEffect(() => {
     function handleKeyboard(e: KeyboardEvent) {
       // Ctrl/Cmd + S: Save file
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         saveFile();
+      }
+      // Ctrl/Cmd + Z: Undo
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        handleUndo();
+      }
+      // Ctrl/Cmd + Y or Ctrl/Cmd + Shift + Z: Redo
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+        e.preventDefault();
+        handleRedo();
       }
       // Ctrl/Cmd + O: Open file
       if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
@@ -388,7 +439,7 @@ export default function App() {
     }
     document.addEventListener('keydown', handleKeyboard);
     return () => document.removeEventListener('keydown', handleKeyboard);
-  }, [saveFile]);
+  }, [saveFile, handleUndo, handleRedo]);
 
   // Open file via Tauri backend (CLI args, macOS events, Tauri drag & drop)
   const openTauriPath = useCallback(async (path: string) => {
@@ -401,6 +452,9 @@ export default function App() {
     try {
       const data = await invoke<{ name: string; content: string; size: number; modified: number }>('read_file_data', { path });
       setCurrentContent(data.content);
+      setInitialContent(data.content);
+      setUndoStack([]);
+      setRedoStack([]);
       setCurrentFileName(data.name);
       setCurrentFilePath(path);
       setCurrentFileSize(data.size);
@@ -490,6 +544,9 @@ export default function App() {
     reader.onload = (e) => {
       const content = e.target?.result as string;
       setCurrentContent(content);
+      setInitialContent(content);
+      setUndoStack([]);
+      setRedoStack([]);
       setCurrentFileName(file.name);
       setCurrentFilePath(''); // Browser file object
       setCurrentFileSize(file.size);
@@ -512,6 +569,9 @@ export default function App() {
 
   const closeFile = useCallback(() => {
     setCurrentContent('');
+    setInitialContent('');
+    setUndoStack([]);
+    setRedoStack([]);
     setCurrentFileName('');
     setCurrentFilePath('');
     setCurrentFileSize(0);
@@ -555,6 +615,9 @@ export default function App() {
       openTauriPath(file.path);
     } else {
       setCurrentContent(file.content);
+      setInitialContent(file.content);
+      setUndoStack([]);
+      setRedoStack([]);
       setCurrentFileName(file.name);
       setCurrentFilePath('');
       setCurrentFileSize(file.size);
@@ -575,6 +638,29 @@ export default function App() {
     i18n.changeLanguage(lang);
     setLangDropdownOpen(false);
   }, [i18n]);
+
+  // Load Online Documentation directly into editor
+  const loadOnlineDoc = useCallback(async (url: string, title: string) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Network error');
+      const text = await res.text();
+      setCurrentContent(text);
+      setInitialContent(text);
+      setUndoStack([]);
+      setRedoStack([]);
+      setCurrentFileName(title);
+      setCurrentFilePath('');
+      setCurrentFileSize(new Blob([text]).size);
+      setCurrentFileModified(Date.now());
+      setHasUnsavedChanges(false);
+      setAboutOpen(false);
+    } catch (err) {
+      console.error('Failed to load online doc:', err);
+      setFileReadError(t('errors.fileReadError', 'Failed to load documentation'));
+      setTimeout(() => setFileReadError(null), 3000);
+    }
+  }, [t]);
 
   const languages = [
     { code: 'it', label: t('language.it', 'Italiano'), flag: '🇮🇹' },
@@ -602,7 +688,9 @@ export default function App() {
         {/* Sidebar Toggle */}
         <button
           onClick={() => setSidebarOpen(prev => !prev)}
-          className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className={`p-2 rounded-lg transition-colors ${
+            sidebarOpen ? 'bg-gray-200 dark:bg-gray-700' : 'hover:bg-gray-200 dark:hover:bg-gray-700'
+          }`}
           title={t('header.toggleSidebar', 'Toggle sidebar') + ' (Ctrl+B)'}
         >
           <IconSidebar />
@@ -624,18 +712,25 @@ export default function App() {
           className="hidden"
         />
 
-        {/* Render Images Toggle */}
-        <button
-          onClick={() => setRenderImages(prev => !prev)}
-          className={`p-2 rounded-lg transition-colors flex items-center gap-1 text-xs font-medium ${
-            renderImages
-              ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50'
-              : 'text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'
-          }`}
-          title={t('header.toggleImages', 'Toggle images rendering')}
-        >
+        {/* Render Images Sliding Toggle */}
+        <div className="flex items-center gap-1.5 px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300 shadow-inner my-auto">
           <IconImage />
-        </button>
+          <span className={!renderImages ? 'text-red-600 dark:text-red-400 font-bold text-[10px]' : 'text-[10px]'}>OFF</span>
+          <button
+            onClick={() => setRenderImages(prev => !prev)}
+            className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              renderImages ? 'bg-blue-600' : 'bg-gray-400 dark:bg-gray-600'
+            }`}
+            title={t('header.toggleImages', 'Toggle images rendering')}
+          >
+            <span
+              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                renderImages ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+          <span className={renderImages ? 'text-blue-600 dark:text-blue-400 font-bold text-[10px]' : 'text-[10px]'}>ON</span>
+        </div>
 
         {/* Spacer */}
         <div className="flex-1" />
@@ -654,7 +749,6 @@ export default function App() {
             onClick={() => {
               setIsEditMode(prev => {
                 const nextMode = !prev;
-                // If toggling to EDIT mode when no file is open, initialize an untitled document
                 if (nextMode && !currentFileName) {
                   setCurrentFileName('Untitled.md');
                   setCurrentFileModified(Date.now());
@@ -776,12 +870,15 @@ export default function App() {
             {/* Shortcuts hint */}
             <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500">
               <div className="font-semibold mb-1">{t('shortcuts.title', 'Keyboard Shortcuts')}</div>
-              <div className="space-y-0.5">
-                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+O</kbd> {t('shortcuts.openFile', 'Open file')}</div>
-                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+S</kbd> {t('shortcuts.saveFile', 'Save file')}</div>
-                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+B</kbd> {t('shortcuts.toggleSidebar', 'Toggle sidebar')}</div>
-                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+D</kbd> {t('shortcuts.toggleDark', 'Toggle theme')}</div>
-                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+F</kbd> {t('shortcuts.find', 'Find in document')}</div>
+              <div className="space-y-1 grid grid-cols-2 gap-x-2 text-[11px] pt-1">
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+O</kbd> {t('shortcuts.openFile', 'Open')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+S</kbd> {t('shortcuts.saveFile', 'Save')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+F</kbd> {t('shortcuts.find', 'Search')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+B</kbd> {t('shortcuts.toggleSidebar', 'Sidebar')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+D</kbd> {t('shortcuts.toggleDark', 'Theme')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+Z</kbd> {t('shortcuts.undo', 'Undo')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Ctrl+Y</kbd> {t('shortcuts.redo', 'Redo')}</div>
+                <div><kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-[10px]">Esc</kbd> {t('shortcuts.close', 'Close')}</div>
               </div>
             </div>
           </aside>
@@ -818,24 +915,10 @@ export default function App() {
                 <span>{t('reader.fileSize', 'Size')}: {formatFileSize(currentFileSize)}</span>
                 <span>{t('reader.lastModified', 'Modified')}: {formatDate(currentFileModified, localeForDates)}</span>
                 
-                <DocumentStats content={currentContent} />
-
                 <div className="flex-1" />
 
-                {/* Search Button */}
-                <button
-                  onClick={() => setIsSearchOpen(prev => !prev)}
-                  className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-lg font-medium bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-sm"
-                  title={t('shortcuts.find', 'Find in document') + ' (Ctrl+F)'}
-                >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  </svg>
-                  <span>{t('shortcuts.find', 'Find')}</span>
-                </button>
-
-                {/* Export Button */}
+                {/* Document Stats & Export Menu */}
+                <DocumentStats content={currentContent} />
                 <ExportMenu fileName={currentFileName} content={currentContent} />
 
                 {/* Save Button */}
@@ -874,26 +957,55 @@ export default function App() {
                   <div className="flex-1 flex flex-col md:flex-row overflow-hidden w-full">
                     {/* Editor / Textarea */}
                     <div className="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50/50 dark:bg-gray-900/50">
-                      <div className="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider flex items-center justify-between">
-                        <span>{t('editor.editorTab', 'Markdown Editor')}</span>
-                        {hasUnsavedChanges && <span className="text-teal-600 dark:text-teal-400 font-normal lowercase">• {t('editor.unsaved', 'unsaved')}</span>}
+                      <div className="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2">
+                          <span>{t('editor.editorTab', 'Markdown Editor')}</span>
+                          {hasUnsavedChanges && <span className="text-teal-600 dark:text-teal-400 font-normal lowercase">• {t('editor.unsaved', 'unsaved')}</span>}
+                        </div>
+                        {/* Undo / Redo / Reset Action Buttons */}
+                        <div className="flex items-center gap-1 text-[11px] font-normal normal-case">
+                          <button
+                            onClick={handleUndo}
+                            disabled={undoStack.length === 0}
+                            className={`px-2 py-0.5 rounded flex items-center gap-1 transition-colors ${
+                              undoStack.length > 0 ? 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                            }`}
+                            title={t('editor.undo', 'Undo') + ' (Ctrl+Z)'}
+                          >
+                            ↩️ {t('editor.undo', 'Annulla')}
+                          </button>
+                          <button
+                            onClick={handleRedo}
+                            disabled={redoStack.length === 0}
+                            className={`px-2 py-0.5 rounded flex items-center gap-1 transition-colors ${
+                              redoStack.length > 0 ? 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                            }`}
+                            title={t('editor.redo', 'Redo') + ' (Ctrl+Y)'}
+                          >
+                            ↪️ {t('editor.redo', 'Ripeti')}
+                          </button>
+                          <button
+                            onClick={handleResetAll}
+                            disabled={currentContent === initialContent}
+                            className={`px-2 py-0.5 rounded flex items-center gap-1 transition-colors ${
+                              currentContent !== initialContent ? 'bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300' : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                            }`}
+                            title={t('editor.resetAll', 'Reset all changes')}
+                          >
+                            🔄 {t('editor.resetAll', 'Annulla tutto')}
+                          </button>
+                        </div>
                       </div>
                       <EditorToolbar
                         textareaRef={textareaRef}
                         content={currentContent}
-                        onContentChange={(newVal) => {
-                          setCurrentContent(newVal);
-                          setHasUnsavedChanges(true);
-                        }}
+                        onContentChange={handleContentChange}
                       />
                       <textarea
                         ref={textareaRef}
                         onScroll={handleEditorScroll}
                         value={currentContent}
-                        onChange={(e) => {
-                          setCurrentContent(e.target.value);
-                          setHasUnsavedChanges(true);
-                        }}
+                        onChange={(e) => handleContentChange(e.target.value)}
                         className="flex-1 w-full p-6 bg-transparent resize-none font-mono text-sm focus:outline-none text-gray-800 dark:text-gray-200 leading-relaxed overflow-y-auto"
                         placeholder={t('editor.placeholder', 'Write your markdown here...')}
                       />
@@ -910,7 +1022,6 @@ export default function App() {
                             rehypePlugins={[rehypeRaw, rehypeHighlight]}
                             components={{
                               a({ node, children, href, ...props }: any) {
-                                // Prevent shortcut reference links like [TEXT] from turning into links
                                 if (node?.type === 'linkReference') {
                                   return <span className="font-semibold text-inherit">[{children}]</span>;
                                 }
@@ -954,7 +1065,6 @@ export default function App() {
                         rehypePlugins={[rehypeRaw, rehypeHighlight]}
                         components={{
                           a({ node, children, href, ...props }: any) {
-                            // Prevent shortcut reference links like [TEXT] from turning into links
                             if (node?.type === 'linkReference') {
                               return <span className="font-semibold text-inherit">[{children}]</span>;
                             }
@@ -996,82 +1106,120 @@ export default function App() {
         </main>
       </div>
 
-      {/* ─── About Dialog ───────────────────────────────────── */}
+      {/* ─── About Dialog (Split / Side-by-Side Layout) ───────────────────────────────────── */}
       {aboutOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
           onClick={() => setAboutOpen(false)}
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden flex flex-col md:flex-row"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header gradient */}
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-6 text-white text-center">
-              <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mx-auto mb-3 shadow-lg bg-white/20">
-                <img src={appIcon} alt="Logo" className="w-full h-full object-cover" />
+            {/* Left Side: App Info & Credits */}
+            <div className="flex-1 bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white flex flex-col justify-between">
+              <div>
+                <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mb-6 shadow-lg bg-white/20">
+                  <img src={appIcon} alt="Logo" className="w-full h-full object-cover" />
+                </div>
+                <h2 className="text-3xl font-bold">{t('app.name')}</h2>
+                <p className="text-white/80 mt-2 text-base leading-relaxed">{t('app.tagline')}</p>
+                <div className="mt-8 space-y-3 text-sm">
+                  <div className="flex justify-between items-center py-1 border-b border-white/10">
+                    <span className="text-white/70">{t('about.version', 'Version')}</span>
+                    <span className="font-mono font-bold text-yellow-300">{APP_VERSION}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1 border-b border-white/10">
+                    <span className="text-white/70">{t('about.author', 'Author')}</span>
+                    <a href={APP_WEBSITE} target="_blank" rel="noopener noreferrer" className="text-white hover:underline font-semibold">{APP_AUTHOR}</a>
+                  </div>
+                  <div className="flex justify-between items-center py-1 border-b border-white/10">
+                    <span className="text-white/70">{t('about.repository', 'Repository')}</span>
+                    <a href={APP_REPO} target="_blank" rel="noopener noreferrer" className="text-white hover:underline font-semibold">GitHub</a>
+                  </div>
+                </div>
               </div>
-              <h2 className="text-2xl font-bold">{t('app.name')}</h2>
-              <p className="text-white/80 mt-1">{t('app.tagline')}</p>
+              <p className="text-xs text-white/60 mt-8 pt-4 border-t border-white/10 leading-relaxed">
+                {t('about.description')}
+              </p>
             </div>
 
-            {/* Info */}
-            <div className="px-8 py-6 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-500 dark:text-gray-400">{t('about.version')}</span>
-                <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">{APP_VERSION}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-500 dark:text-gray-400">{t('about.author')}</span>
-                <a
-                  href={APP_WEBSITE}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
-                >
-                  {APP_AUTHOR}
-                </a>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-500 dark:text-gray-400">{t('about.repository')}</span>
-                <a
-                  href={APP_REPO}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
-                >
-                  GitHub
-                </a>
-              </div>
+            {/* Right Side: Integrated Documentation & Changelog */}
+            <div className="flex-1 p-8 bg-white dark:bg-gray-800 flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                  <span>📚</span> {t('about.documentation', 'Integrated Documentation')}
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-6">
+                  Click any language to load and read the official README or Changelog directly within the application.
+                </p>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.it.md', 'README.it.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
+                    <span className="text-2xl">🇮🇹</span>
+                    <div>
+                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Italiano</div>
+                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.it.md</div>
+                    </div>
+                  </button>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.en-GB.md', 'README.en-GB.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
+                    <span className="text-2xl">🇬🇧</span>
+                    <div>
+                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">English (UK)</div>
+                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.en-GB.md</div>
+                    </div>
+                  </button>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.md', 'README.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
+                    <span className="text-2xl">🇺🇸</span>
+                    <div>
+                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">English (US)</div>
+                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.md</div>
+                    </div>
+                  </button>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.es.md', 'README.es.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
+                    <span className="text-2xl">🇪🇸</span>
+                    <div>
+                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Español</div>
+                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.es.md</div>
+                    </div>
+                  </button>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.fr.md', 'README.fr.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
+                    <span className="text-2xl">🇫🇷</span>
+                    <div>
+                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Français</div>
+                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.fr.md</div>
+                    </div>
+                  </button>
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/README.de.md', 'README.de.md')} className="p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl text-left transition-all border border-gray-200 dark:border-gray-600/50 group flex items-center gap-3 shadow-sm hover:shadow">
+                    <span className="text-2xl">🇩🇪</span>
+                    <div>
+                      <div className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Deutsch</div>
+                      <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">README.de.md</div>
+                    </div>
+                  </button>
+                </div>
 
-              {/* Documentation Section */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-                <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('about.documentation', '📚 Documentation (README)')}</h4>
-                <div className="grid grid-cols-3 gap-2 pt-1">
-                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.it.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇮🇹 Italiano</a>
-                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.en-GB.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇬🇧 English (UK)</a>
-                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇺🇸 English (US)</a>
-                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.es.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇪🇸 Español</a>
-                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.fr.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇫🇷 Français</a>
-                  <a href="https://github.com/PiBOH/multimdreader/blob/main/README.de.md" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-center text-xs font-medium transition-colors border border-gray-200 dark:border-gray-600/50">🇩🇪 Deutsch</a>
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <button onClick={() => loadOnlineDoc('https://raw.githubusercontent.com/PiBOH/multimdreader/main/CHANGELOG.md', 'CHANGELOG.md')} className="w-full p-3 bg-gradient-to-r from-purple-500/10 to-blue-500/10 hover:from-purple-500/20 hover:to-blue-500/20 text-purple-700 dark:text-purple-300 rounded-xl text-left transition-all border border-purple-200 dark:border-purple-800/50 flex items-center justify-between group shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">🔄</span>
+                      <div>
+                        <div className="text-xs font-bold group-hover:text-purple-600 dark:group-hover:text-purple-400">Official Changelog</div>
+                        <div className="text-[10px] text-purple-400 font-mono">CHANGELOG.md</div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold px-2 py-1 bg-purple-200 dark:bg-purple-900/50 rounded-lg">Read Live</span>
+                  </button>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {t('about.description')}
-                </p>
+              <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => setAboutOpen(false)}
+                  className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl font-bold transition-colors text-gray-700 dark:text-gray-200 shadow-sm"
+                >
+                  {t('about.close', 'Close')}
+                </button>
               </div>
-            </div>
-
-            {/* Close button */}
-            <div className="px-8 pb-6">
-              <button
-                onClick={() => setAboutOpen(false)}
-                className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg font-medium transition-colors"
-              >
-                {t('about.close')}
-              </button>
             </div>
           </div>
         </div>

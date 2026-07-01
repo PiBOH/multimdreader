@@ -7,7 +7,7 @@
 
 </div>
 
-**Version 0.1.1_RC1** · Autor: [PiBOH](https://piboh.github.io/)
+**Version 0.1.1_RC4** · Autor: [PiBOH](https://piboh.github.io/)
 
 > 🔤 Ein plattformübergreifender Markdown-Dateireader. Keine Installation erforderlich — einfach herunterladen und starten.
 
@@ -125,9 +125,13 @@ Wird bei jedem Push auf `main` ausgeführt — stellt Dashboard und Demo auf Git
 | Kürzel     | Aktion                            |
 |------------|-----------------------------------|
 | `Strg+O`  | Datei öffnen                      |
+| `Strg+S`  | Datei speichern                   |
+| `Strg+F`  | Im Dokument suchen                |
 | `Strg+B`  | Seitenleiste umschalten           |
 | `Strg+D`  | Dunkles/helles Design umschalten  |
-| `Escape`   | Dialog schließen                  |
+| `Strg+Z`  | Rückgängig                        |
+| `Strg+Y`  | Wiederholen                       |
+| `Escape`   | Dialog/Suche schließen            |
 
 ## 📝 Lizenz
 
@@ -137,4 +141,4 @@ AGPL-3.0 © [PiBOH](https://piboh.github.io/)
 
 **Repository**: [github.com/PiBOH/multimdreader](https://github.com/PiBOH/multimdreader)  
 **Autor**: [PiBOH](https://piboh.github.io/)  
-**Version**: 0.1.1_RC1
+**Version**: 0.1.1_RC4

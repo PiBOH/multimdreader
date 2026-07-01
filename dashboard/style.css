@@ -160,3 +160,9 @@ body.light .cache-notice {
 }
 .cache-notice button:hover { color: #ef4444; }
 @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ─── Status Badge ──────────────────────────────────────────── */
+.status-badge { display: inline-block; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.status-badge.live { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
+.status-badge.cache { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid #f59e0b; }
+.status-badge.hardcoded { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid #ef4444; }

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1_RC4] — 2026-07-01
+
+### ✨ Masterclass UI Diagnostics & Advanced History Controls
+
+- **Render Images Sliding Toggle**: Replaced the standalone image toggle button in the header with a fully interactive sliding switch (`NO-IMG [Toggle] IMG`), perfectly matching the visual language of the Read/Edit toggle.
+- **Smart Diagnostic Dashboard Notice**: Implemented an intelligent status badge (`#changelog-status-badge`) in `dashboard/index.html` that dynamically informs the user whether the changelog was loaded live from GitHub (`🟢 Live da GitHub`), served from browser cache (`🟡 Caricato da Cache`), or displayed via built-in fallback (`🟠 Codice Integrato - Offline`).
+- **Download Reliability Statement**: Added an explicit disclaimer in the dashboard download section guaranteeing that all asset links strictly point to the latest verified stable release (`0.0.7_STABLE`).
+- **Advanced Editing History (Undo/Redo/Reset)**: In Edit mode, added fully responsive action buttons in the editor tab bar for `↩️ Annulla` (`Ctrl+Z`), `↪️ Ripeti` (`Ctrl+Y`), and `🔄 Annulla tutto`, powered by dedicated undo/redo history state stacks in React.
+- **Keyboard Shortcuts Expansion**: Updated the keyboard shortcuts overview in the app sidebar and all 6 language READMEs to include Save (`Ctrl+S`), Find (`Ctrl+F`), Undo (`Ctrl+Z`), and Redo (`Ctrl+Y`).
+- **Global Version Alignment**: Cleaned up all leftover version strings across READMEs and manifests to `0.1.1_RC4`.
+
+---
+
 ## [0.1.1_RC3] — 2026-07-01
 
 ### ✨ UX, Clean Reading & Rendering Perfection
@@ -33,14 +46,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.1.1_RC1] — 2026-07-01
+## [0.1.1_RC4] — 2026-07-01
 
 ### ✨ UX & Markdown Rendering Perfection
 
 - **Always-Visible Read/Edit Toggle**: Removed the conditional check on the header toggle switch so that `READ (toggle) EDIT` is always visible. Switching to Edit mode from the welcome screen instantly initializes a clean `Untitled.md` editing workspace.
 - **Reference Link vs Explicit Link Precision**: Configured `react-markdown` AST component overrides (`node.type === 'linkReference'`) to ensure that shortcut text enclosed in square brackets (e.g., `[TEXT]`) is rendered cleanly as plain text, while explicit inline links (e.g., `[TEXT](URL)`) are properly rendered as clickable anchor tags (`<a>`).
 - **Raw HTML Rendering**: Integrated `rehype-raw` into the parser pipeline to correctly decode and render raw HTML elements, such as aligned wrapper divs (`<div align="center">`) and embedded badge images commonly found at the top of professional README files.
-- **Version Updates**: Updated all version references to `0.1.1_RC1`.
+- **Version Updates**: Updated all version references to `0.1.1_RC4`.
 
 ---
 
@@ -261,6 +274,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.1.1_RC4]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC4
 [0.1.1_RC3]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC3
 [0.1.1_RC2]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC2
 [0.1.1_RC1]: https://github.com/PiBOH/multimdreader/releases/tag/v0.1.1_RC1

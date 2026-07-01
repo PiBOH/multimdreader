@@ -141,7 +141,7 @@
     <h2><span>▶</span> Download</h2>
     <p>
       Current version: <strong><span id="dl-version">0.0.7_STABLE</span></strong>
-      · All links point to the latest release on GitHub.
+      · The links below strictly point to the latest official stable release on GitHub, ensuring you always download a thoroughly tested and reliable package.
     </p>
 
     <div class="card-grid">
@@ -190,9 +190,19 @@
   <!-- ========== CHANGELOG ========== -->
   <div id="changelog" class="section">
     <h2><span>▶</span> Changelog</h2>
+    <div id="changelog-status-badge"></div>
     <p>Fetched live from the repository — always up to date.</p>
     <div id="changelog-content">
       <article>
+        <h3>[0.1.1_RC4]</h3>
+        <ul>
+          <li>Render Images Sliding Toggle: Replaced standalone toggle button with sliding switch (`NO-IMG [Toggle] IMG`)</li>
+          <li>Smart Diagnostic Dashboard Notice: `#changelog-status-badge` dynamically reports live GitHub fetch vs cache vs hardcoded fallback</li>
+          <li>Download Reliability Statement: Explicitly clarified all links point strictly to verified stable release `0.0.7_STABLE`</li>
+          <li>Advanced Editing History: Added Undo (`Ctrl+Z`), Redo (`Ctrl+Y`), and Reset All action buttons with dedicated React history stacks</li>
+          <li>Updated keyboard shortcuts in app sidebar and all READMEs</li>
+          <li>Updated all version references to <code>0.1.1_RC4</code></li>
+        </ul>
         <h3>[0.1.1_RC3]</h3>
         <ul>
           <li>Image Rendering Toggle: Added header button (`IconImage`) to toggle image rendering on/off (active by default). Replaces images with clean plain text badges when off</li>
@@ -212,7 +222,7 @@
           <li>Always-Visible Read/Edit Toggle: Switching to Edit mode from welcome screen initializes a clean `Untitled.md` workspace</li>
           <li>Reference Link vs Explicit Link Precision: `[TEXT]` renders as plain text, `[TEXT](URL)` renders as clickable link</li>
           <li>Raw HTML Rendering: Added `rehype-raw` to correctly decode `<div align="center">` and badge images in READMEs</li>
-          <li>Updated all version references to <code>0.1.1_RC1</code></li>
+          <li>Updated all version references to <code>0.1.1_RC4</code></li>
         </ul>
         <h3>[0.1.0_BETA]</h3>
         <ul>
@@ -411,41 +421,52 @@ Build:
       });
     });
 
-    // Live Changelog Fetcher
+    // Live Changelog Fetcher with Diagnostic Status Badge
     async function fetchChangelog() {
+      const statusBadge = document.getElementById('changelog-status-badge');
       try {
-        const res = await fetch('https://raw.githubusercontent.com/PiBOH/multimdreader/main/CHANGELOG.md');
-        if (!res.ok) return;
-        const text = await res.text();
-        
-        const lines = text.split('\n');
-        let html = '<article>';
-        let inList = false;
-        
-        for (let line of lines) {
-          line = line.trim();
-          if (line.startsWith('## [')) {
-            if (inList) { html += '</ul>'; inList = false; }
-            const versionTitle = line.replace('## ', '');
-            html += `<h3>${versionTitle}</h3>`;
-          } else if (line.startsWith('- ') || line.startsWith('* ')) {
-            if (!inList) { html += '<ul>'; inList = true; }
-            let itemText = line.substring(2);
-            itemText = itemText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            itemText = itemText.replace(/`(.*?)`/g, '<code>$1</code>');
-            html += `<li>${itemText}</li>`;
-          } else if (line.startsWith('### ')) {
-            if (inList) { html += '</ul>'; inList = false; }
-            html += `<h4>${line.replace('### ', '')}</h4>`;
+        const nav = performance.getEntriesByType('navigation')[0];
+        if (nav && (nav.transferSize === 0 || nav.type === 'back_forward')) {
+          if (statusBadge) statusBadge.innerHTML = '<span class="status-badge cache">🟡 Caricato da Cache Browser (Premi Ctrl+F5)</span>';
+        } else {
+          const res = await fetch('https://raw.githubusercontent.com/PiBOH/multimdreader/main/CHANGELOG.md');
+          if (res.ok) {
+            const text = await res.text();
+            const lines = text.split('\n');
+            let html = '<article>';
+            let inList = false;
+            
+            for (let line of lines) {
+              line = line.trim();
+              if (line.startsWith('## [')) {
+                if (inList) { html += '</ul>'; inList = false; }
+                const versionTitle = line.replace('## ', '');
+                html += `<h3>${versionTitle}</h3>`;
+              } else if (line.startsWith('- ') || line.startsWith('* ')) {
+                if (!inList) { html += '<ul>'; inList = true; }
+                let itemText = line.substring(2);
+                itemText = itemText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                itemText = itemText.replace(/`(.*?)`/g, '<code>$1</code>');
+                html += `<li>${itemText}</li>`;
+              } else if (line.startsWith('### ')) {
+                if (inList) { html += '</ul>'; inList = false; }
+                html += `<h4>${line.replace('### ', '')}</h4>`;
+              }
+            }
+            if (inList) html += '</ul>';
+            html += '</article>';
+            
+            const container = document.getElementById('changelog-content');
+            if (container) container.innerHTML = html;
+            if (statusBadge) statusBadge.innerHTML = '<span class="status-badge live">🟢 Live da GitHub Repository (Workflow Main)</span>';
+            return;
           }
         }
-        if (inList) html += '</ul>';
-        html += '</article>';
-        
-        const container = document.getElementById('changelog-content');
-        if (container) container.innerHTML = html;
       } catch (err) {
         console.warn('Could not fetch live changelog, using built-in fallback:', err);
+      }
+      if (statusBadge && !statusBadge.innerHTML.includes('Cache')) {
+        statusBadge.innerHTML = '<span class="status-badge hardcoded">🟠 Codice Integrato (Hardcoded Fallback - Offline/AdBlock)</span>';
       }
     }
     fetchChangelog();
