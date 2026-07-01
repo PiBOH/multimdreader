@@ -5,9 +5,10 @@
 
 **Download the latest release [here](https://github.com/PiBOH/multimdreader/releases/latest)**
 
+**Version 0.1.1_STABLE5** · Author: [PiBOH](https://piboh.github.io/)
+
 </div>
 
-**Version 0.1.1_STABLE5** · Author: [PiBOH](https://piboh.github.io/)
 
 > 🔤 A cross-platform Markdown file reader and advanced editor. No installation required — just download and run.
 
