@@ -33,15 +33,19 @@
 
 Téléchargez la dernière version depuis la [page des Releases](https://github.com/PiBOH/multimdreader/releases).
 
-| Plateforme               | Fichier                           | Comment exécuter                         |
-| ------------------------ | --------------------------------- | ---------------------------------------- |
-| **Windows**              | MultiMDReader_\*_x64-setup.exe    | Double-clic pour installer et lancer     |
-| **Windows (Portable)**   | multimdreader.exe                 | Exécutez directement le .exe             |
-| **macOS (Intel)**        | MultiMDReader_\*_x64.dmg          | Ouvrir .dmg → glisser vers Applications  |
-| **macOS (Apple Silicon)**| MultiMDReader_\*_aarch64.dmg      | Ouvrir .dmg → glisser vers Applications  |
-| **Linux (Debian/Ubuntu)**| MultiMDReader_\*_amd64.deb        | `sudo dpkg -i *.deb`                     |
-| **Linux (Toutes distros)** | MultiMDReader_\*_amd64.AppImage | `chmod +x && ./MultiMDReader_*.AppImage` |
-| **Linux (Arch)**         | multimdreader-\*.pkg.tar.zst      | `sudo pacman -U *.pkg.tar.zst`           |
+| Plateforme                      | Fichier                                   | Comment exécuter                         |
+| ------------------------------- | ----------------------------------------- | ---------------------------------------- |
+| **Windows (64-bit)**            | `MultiMDReader_*_x64-setup.exe`           | Double-clic pour installer et lancer     |
+| **Windows (32-bit x86)**        | `MultiMDReader_*_x86-setup.exe`           | Double-clic pour installer et lancer     |
+| **Windows (Portable x64)**      | `multimdreader_*_x64-portable-win.exe`    | Exécutez directement le .exe             |
+| **Windows (Portable x86)**      | `multimdreader_*_x86-portable-win.exe`    | Exécutez directement le .exe             |
+| **macOS (Intel x64)**           | `MultiMDReader_*_x64.dmg`                 | Ouvrir .dmg → glisser vers Applications  |
+| **macOS (Apple Silicon arm64)** | `MultiMDReader_*_aarch64.dmg`             | Ouvrir .dmg → glisser vers Applications  |
+| **Linux (Debian/Ubuntu x64)**   | `MultiMDReader_*_amd64.deb`               | `sudo dpkg -i *.deb`                     |
+| **Linux (Debian/Ubuntu x86)**   | `MultiMDReader_*_i386.deb`                | `sudo dpkg -i *.deb`                     |
+| **Linux (Toutes distros x64)**  | `MultiMDReader_*_amd64.AppImage`          | `chmod +x && ./MultiMDReader_*.AppImage` |
+| **Linux (Arch x64)**            | `multimdreader-bin-*-x86_64.pkg.tar.zst`  | `sudo pacman -U *.pkg.tar.zst`           |
+| **Linux (Arch x86)**            | `multimdreader-bin-*-i686.pkg.tar.zst`    | `sudo pacman -U *.pkg.tar.zst`           |
 
 > ⚠️ **Avis sur les tests** : L'auteur n'a testé que les versions Windows (spécifiquement sur Windows 11). Les builds macOS et Linux sont fournis tels quels et peuvent contenir des problèmes spécifiques à la plateforme. Si vous rencontrez un problème sur macOS ou Linux, merci d'[ouvrir une issue](https://github.com/PiBOH/multimdreader/issues).
 

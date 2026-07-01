@@ -7,6 +7,7 @@ import 'highlight.js/styles/github-dark.css';
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
 import { listen } from '@tauri-apps/api/event';
+import appIcon from './icon.png';
 
 // ─── Constants ────────────────────────────────────────────────────
 const APP_VERSION = '0.0.8_BETA5';
@@ -494,8 +495,8 @@ export default function App() {
       <header className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shrink-0">
         {/* Logo & Title */}
         <div className="flex items-center gap-2 mr-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
-            M
+          <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center shadow-md shrink-0 bg-gradient-to-br from-blue-500 to-purple-600">
+            <img src={appIcon} alt="Logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-semibold text-lg hidden sm:inline">MultiMDReader</span>
         </div>
@@ -731,8 +732,8 @@ export default function App() {
           >
             {/* Header gradient */}
             <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-6 text-white text-center">
-              <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-3xl font-bold mx-auto mb-3 shadow-lg">
-                M
+              <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mx-auto mb-3 shadow-lg bg-white/20">
+                <img src={appIcon} alt="Logo" className="w-full h-full object-cover" />
               </div>
               <h2 className="text-2xl font-bold">{t('app.name')}</h2>
               <p className="text-white/80 mt-1">{t('app.tagline')}</p>
@@ -796,8 +797,8 @@ function WelcomeScreen({ onOpenFile }: { onOpenFile: () => void }) {
   return (
     <div className="flex items-center justify-center h-full p-8">
       <div className="text-center max-w-lg">
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-5xl font-bold text-white mx-auto mb-6 shadow-xl">
-          M
+        <div className="w-24 h-24 rounded-3xl overflow-hidden flex items-center justify-center mx-auto mb-6 shadow-xl bg-gradient-to-br from-blue-500 to-purple-600">
+          <img src={appIcon} alt="Logo" className="w-full h-full object-cover" />
         </div>
         <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           {t('welcome.title')}
