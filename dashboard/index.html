@@ -204,7 +204,7 @@
         <ul>
           <li>Render Images Sliding Toggle: Replaced standalone toggle button with sliding switch (`NO-IMG [Toggle] IMG`)</li>
           <li>Smart Diagnostic Dashboard Notice: `#changelog-status-badge` dynamically reports live GitHub fetch vs cache vs hardcoded fallback</li>
-          <li>Download Reliability Statement: Explicitly clarified all links point strictly to verified stable release `0.1.1_STABLE5`</li>
+          <li>Download Reliability Statement: Explicitly clarified all links point strictly to verified stable release `0.0.7_STABLE`</li>
           <li>Advanced Editing History: Added Undo (`Ctrl+Z`), Redo (`Ctrl+Y`), and Reset All action buttons with dedicated React history stacks</li>
           <li>Updated keyboard shortcuts in app sidebar and all READMEs</li>
           <li>Updated all version references to <code>0.1.1_RC4</code></li>
@@ -254,13 +254,13 @@
           <li>Clarified Windows XP legacy engine limitations (Chromium/WebView2 minimum requirement is Windows 7)</li>
           <li>Updated all version references to <code>0.0.8_BETA4</code></li>
         </ul>
-        <h3>[0.1.1_STABLE5]</h3>
+        <h3>[0.0.7_STABLE]</h3>
         <ul>
           <li>Fixed file association opening: double-clicking an associated file in the OS now correctly opens and loads the file contents in the app</li>
           <li>Fixed native OS Drag & Drop functionality in the desktop app</li>
           <li>Configured native bundle file associations in <code>tauri.conf.json</code></li>
           <li>Added <code>%f</code> parameter to Linux desktop entry in <code>PKGBUILD</code></li>
-          <li>Updated all version references to <code>0.1.1_STABLE5</code></li>
+          <li>Updated all version references to <code>0.0.7_STABLE</code></li>
           <li>Created <code>arenaai.md</code> developer guide</li>
         </ul>
         <h3>[0.0.6_STABLE]</h3>
@@ -489,6 +489,28 @@ Build:
         console.warn('Cache detection not supported:', err);
       }
     });
+
+    // Live Version Fetcher (Fetches latest stable release tag dynamically from GitHub API)
+    async function fetchLatestVersion() {
+      try {
+        const res = await fetch('https://api.github.com/repos/PiBOH/multimdreader/releases/latest');
+        if (!res.ok) return;
+        const data = await res.json();
+        let ver = data.tag_name || '';
+        if (ver.startsWith('v')) ver = ver.substring(1);
+        
+        const vDisp = document.getElementById('version-display');
+        const dlDisp = document.getElementById('dl-version');
+        const fDisp = document.querySelector('.footer-version');
+        
+        if (vDisp && ver) vDisp.textContent = ver;
+        if (dlDisp && ver) dlDisp.textContent = ver;
+        if (fDisp && ver) fDisp.textContent = 'v' + ver;
+      } catch (err) {
+        console.warn('Could not fetch latest version, using built-in fallback:', err);
+      }
+    }
+    fetchLatestVersion();
   </script>
 
   <!-- ========== CACHE NOTICE TOAST ========== -->
